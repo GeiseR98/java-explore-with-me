@@ -9,23 +9,6 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class EndpointHitController {
 
-//    private final EndpointHitsService service;
-//
-//    @PostMapping(path = "/hit")
-//    public void hit(@Valid @RequestBody EndpointHitDto endpointHitDto) {
-//        log.debug("Создание запроса {}", endpointHitDto);
-//        service.addHit(endpointHitDto);
-//    }
-//
-//    @GetMapping(path = "/stats")
-//    public List<ViewStats> stats(@RequestParam(name = "start") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
-//                                 @RequestParam(name = "end") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
-//                                 @RequestParam(name = "uris", required = false) List<String> uris,
-//                                 @RequestParam(name = "unique", defaultValue = "false") boolean unique) {
-//        log.debug("Попытка получить статистику");
-//        return service.stats(start, end, uris, unique);
-//    }
-
     @GetMapping(path = "/test")
     public String test() {
         return "Привет из стата";
