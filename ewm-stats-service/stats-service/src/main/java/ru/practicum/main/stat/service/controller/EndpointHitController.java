@@ -2,6 +2,7 @@ package ru.practicum.main.stat.service.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.main.stat.dto.EndpointHitDto;
 import ru.practicum.main.stat.service.service.EndpointHitService;
@@ -21,6 +22,7 @@ public class EndpointHitController {
         return "Привет из стата";
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(path = "/hit")
     public EndpointHitDto hit (@Valid @RequestBody EndpointHitDto endpointHitDto) {
         log.debug("Создание запроса {}" , endpointHitDto);
