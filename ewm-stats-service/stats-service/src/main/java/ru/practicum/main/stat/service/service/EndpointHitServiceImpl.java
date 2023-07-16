@@ -30,8 +30,9 @@ public class EndpointHitServiceImpl implements EndpointHitService {
     @Override
     @Transactional
     public List<EndpointHitDto> stats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
-        return repository.findByDateTime(start, end).stream()
-                .map(mapper::toDto)
-                .collect(Collectors.toList());
+//        return repository.findByDateTime(start, end).stream()
+//                .map(mapper::toDto)
+//                .collect(Collectors.toList());
+        return repository.findEndpointHitDtoByDateTime(start, end);
     }
 }
