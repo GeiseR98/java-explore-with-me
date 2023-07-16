@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.main.stat.dto.EndpointHitDto;
+import ru.practicum.main.stat.dto.ViewStats;
 import ru.practicum.main.stat.service.mapper.EndpointHitMapper;
 import ru.practicum.main.stat.service.repository.EndpointHitRepository;
 
@@ -29,10 +30,10 @@ public class EndpointHitServiceImpl implements EndpointHitService {
 
     @Override
     @Transactional
-    public List<EndpointHitDto> stats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
+    public List<ViewStats> stats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
 //        return repository.findByDateTime(start, end).stream()
 //                .map(mapper::toDto)
 //                .collect(Collectors.toList());
-        return repository.findEndpointHitDtoByDateTime(start, end);
+        return repository.findViewStatsByDateTime(start, end);
     }
 }

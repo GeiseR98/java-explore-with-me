@@ -3,6 +3,7 @@ package ru.practicum.main.stat.service.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.practicum.main.stat.dto.EndpointHitDto;
+import ru.practicum.main.stat.dto.ViewStats;
 import ru.practicum.main.stat.service.model.EndpointHit;
 
 import java.time.LocalDateTime;
@@ -19,4 +20,9 @@ public interface EndpointHitRepository extends JpaRepository<EndpointHit, Intege
             "FROM EndpointHit AS h " +
             "WHERE h.timestamp BETWEEN ?1 AND ?2")
     List<EndpointHitDto> findEndpointHitDtoByDateTime(LocalDateTime start, LocalDateTime end);
+
+    @Query("SELECT new ru.practicum.main.stat.dto.ViewStats(h.app, h.uri, COUNT(h.app)) " +
+            "FROM EndpointHit AS h " +
+            "WHERE h.timestamp BETWEEN ?1 AND ?2")
+    List<ViewStats> findViewStatsByDateTime(LocalDateTime start, LocalDateTime end);
 }
