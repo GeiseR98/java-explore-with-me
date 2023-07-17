@@ -6,10 +6,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.main.stat.dto.EndpointHitDto;
 import ru.practicum.main.stat.dto.ViewStats;
+import ru.practicum.main.stat.service.exception.TimestampException;
 import ru.practicum.main.stat.service.mapper.EndpointHitMapper;
 import ru.practicum.main.stat.service.repository.EndpointHitRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,9 +21,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class EndpointHitServiceImpl implements EndpointHitService {
-
     private final EndpointHitRepository repository;
     private final EndpointHitMapper mapper;
+
     @Override
     @Transactional
     public EndpointHitDto addHit(EndpointHitDto hitDto) {
@@ -31,9 +34,30 @@ public class EndpointHitServiceImpl implements EndpointHitService {
     @Override
     @Transactional
     public List<ViewStats> stats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
-//        return repository.findByDateTime(start, end).stream()
-//                .map(mapper::toDto)
-//                .collect(Collectors.toList());
-        return repository.findViewStatsByDateTime(start, end);
+        List<ViewStats> list = new ArrayList<>();
+
+
+        if (start.isAfter(end)) {
+            throw new TimestampException("Время начала диапазона поиска не может быть позже времени конца.");
+        }
+
+        if (uris != null && !uris.isEmpty()) {
+            if (unique) {
+                for (String uri : uris) {
+                    list.addAll(repository.findViewStatsByDateTimeAndUriAndUnique(start, end, uri));
+                }
+            } else {
+                for (String uri : uris) {
+                    list.addAll(repository.findViewStatsByDateTimeAndUri(start, end, uri));
+                }
+            }
+        } else {
+            if (unique) {
+                list.addAll(repository.findViewStatsByDateTimeAndUnique(start, end));
+            } else {
+                list.addAll(repository.findViewStatsByDateTime(start, end));
+            }
+        }
+        return list.stream().sorted(Comparator.comparing(ViewStats::getHits).reversed()).collect(Collectors.toList());
     }
 }
