@@ -22,7 +22,7 @@ services:
       - POSTGRES_DB=stats_db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=iamroot
-  #  stats-db:
+#  stats-db:
 #    image: postgres:14-alpine
 
   ewm-service:
@@ -31,6 +31,23 @@ services:
     container_name: main_server_container
     ports:
       - "8080:8080"
+    depends_on:
+      - ewm-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5433/ewm_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=iamroot
 
+  ewm-db:
+    image: postgres:14-alpine
+    container_name: db_ewm_container
+    ports:
+      - "6542:5433"
+    depends_on:
+      - stats-server
+    environment:
+      - POSTGRES_DB=ewm_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=iamroot
 #  ewm-db:
 #    image: postgres:14-alpine
