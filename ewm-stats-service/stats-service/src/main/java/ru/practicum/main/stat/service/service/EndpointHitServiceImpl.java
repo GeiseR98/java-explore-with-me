@@ -36,20 +36,19 @@ public class EndpointHitServiceImpl implements EndpointHitService {
     public List<ViewStats> stats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
         List<ViewStats> list = new ArrayList<>();
 
-
         if (start.isAfter(end)) {
             throw new TimestampException("Время начала диапазона поиска не может быть позже времени конца.");
         }
 
         if (uris != null && !uris.isEmpty()) {
             if (unique) {
-                for (String uri : uris) {
-                    list.addAll(repository.findViewStatsByDateTimeAndUriAndUnique(start, end, uri));
-                }
+                list = uris.stream()
+                        .flatMap(uri -> repository.findViewStatsByDateTimeAndUriAndUnique(start, end, uri).stream())
+                        .collect(Collectors.toList());
             } else {
-                for (String uri : uris) {
-                    list.addAll(repository.findViewStatsByDateTimeAndUri(start, end, uri));
-                }
+                list = uris.stream()
+                        .flatMap(uri -> repository.findViewStatsByDateTimeAndUri(start, end, uri).stream())
+                        .collect(Collectors.toList());
             }
         } else {
             if (unique) {
