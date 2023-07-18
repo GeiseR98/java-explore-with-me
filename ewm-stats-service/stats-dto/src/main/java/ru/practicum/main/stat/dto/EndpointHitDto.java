@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Data
@@ -16,10 +17,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class EndpointHitDto {
     @NotBlank
-    private String app;
+    private String app; // на данный момент не располагаю информацией о размере
     @NotBlank
-    private String uri;
+    private String uri; // на данный момент не располагаю информацией о размере
     @NotBlank
+    @Size(min = 7, max = 15)
     private String ip;
     @JsonProperty("timestamp")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
