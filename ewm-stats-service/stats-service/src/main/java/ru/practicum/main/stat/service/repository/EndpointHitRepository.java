@@ -40,7 +40,7 @@ public interface EndpointHitRepository extends JpaRepository<EndpointHit, Intege
 
     @Query("SELECT new ru.practicum.main.stat.dto.ViewStats(h.app, h.uri, COUNT(h.app)) " +
             "FROM EndpointHit AS h " +
-            "WHERE h.uri IN(?3) " +
+            "WHERE h.uri  IN(?3) " +
             "AND h.timestamp BETWEEN ?1 AND ?2 " +
             "GROUP BY h.app, h.uri " +
             "ORDER BY COUNT(h.app) DESC ")
@@ -48,10 +48,10 @@ public interface EndpointHitRepository extends JpaRepository<EndpointHit, Intege
 
     @Query("SELECT new ru.practicum.main.stat.dto.ViewStats(h.app, h.uri, COUNT(h.app)) " +
             "FROM EndpointHit AS h " +
-            "WHERE h.uri IN(?3) " +
+            "WHERE h.uri like concat(?3, '%') " +
             "AND h.timestamp BETWEEN ?1 AND ?2 " +
             "GROUP BY h.app, h.uri " +
             "HAVING COUNT(h.ip) = 1 " +
             "ORDER BY COUNT(h.app) DESC ")
-    List<ViewStats> findViewStatsByDateTimeAndUriAndUnique(LocalDateTime start, LocalDateTime end, List<String> u);
+    List<ViewStats> findViewStatsByDateTimeAndUriAndUnique(LocalDateTime start, LocalDateTime end, String u);
 }

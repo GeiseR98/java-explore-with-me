@@ -42,7 +42,9 @@ public class EndpointHitServiceImpl implements EndpointHitService {
 
         if (uris != null && !uris.isEmpty()) {
             if (unique) {
-                list.addAll(repository.findViewStatsByDateTimeAndUriAndUnique(start, end, uris));
+                list = uris.stream()
+                        .flatMap(uri -> repository.findViewStatsByDateTimeAndUriAndUnique(start, end, uri).stream())
+                        .collect(Collectors.toList());
             } else {
                 list.addAll(repository.findViewStatsByDateTimeAndUri(start, end, uris));
             }
