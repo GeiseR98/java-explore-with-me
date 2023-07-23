@@ -19,4 +19,12 @@ public class UserServiceImpl implements UserService {
     public UserDto save(UserDto userDto) {
         return userMapper.toDto(userRepository.save(userMapper.toEntity(userDto)));
     }
+
+    @Override
+    @Transactional
+    public void removeById(Integer userId) {
+        userRepository.deleteById(userId);
+    }
+
+
 }
