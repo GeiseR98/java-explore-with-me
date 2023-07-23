@@ -14,7 +14,7 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDto {
-    private int Id;
+    private int id;
     @NotBlank
     @Length(max = 256)
     private String name;
