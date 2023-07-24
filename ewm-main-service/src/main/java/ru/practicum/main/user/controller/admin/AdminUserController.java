@@ -9,6 +9,9 @@ import ru.practicum.main.user.dto.UserDto;
 import ru.practicum.main.user.service.UserService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/admin/users")
@@ -30,5 +33,13 @@ public class AdminUserController {
     public void removeById(@PathVariable Integer userId) {
         log.info("Попытка удаления пользователя с идентификатором: {}", userId);
         userService.removeById(userId);
+    }
+
+    @GetMapping
+    public List<UserDto> getUsers(@RequestParam(name = "ids", required = false) List<Integer> ids,
+                                  @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
+                                  @RequestParam(name = "size", defaultValue = "10") @Positive Integer size) {
+        log.debug("Попытка получить пользователей");
+        return userService.getUsers(ids, from, size);
     }
 }
