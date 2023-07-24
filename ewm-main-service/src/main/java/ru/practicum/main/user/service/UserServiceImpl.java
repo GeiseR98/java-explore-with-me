@@ -9,6 +9,7 @@ import ru.practicum.main.user.dto.UserDto;
 import ru.practicum.main.user.mapper.UserMapper;
 import ru.practicum.main.user.repository.UserRepository;
 import ru.practicum.main.utility.Page;
+import ru.practicum.main.utility.Utility;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final Utility utility;
     private final UserMapper userMapper;
 
     @Override
@@ -30,7 +32,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void removeById(Integer userId) {
-        userRepository.deleteById(userId);
+        userRepository.deleteById(utility.checkUser(userId).getId());
     }
 
     @Transactional(readOnly = true)

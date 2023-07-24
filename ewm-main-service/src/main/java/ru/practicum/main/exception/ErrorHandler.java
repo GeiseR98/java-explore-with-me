@@ -20,4 +20,15 @@ public class ErrorHandler {
                 .timestamp(LocalDateTime.parse(LocalDateTime.now().format(Constants.formatter), Constants.formatter))
                 .build();
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiError handleNotFoundException(final NotFoundException e) {
+        return ApiError.builder()
+                .message(e.getMessage())
+                .reason("The required object was not found.")
+                .status(HttpStatus.NOT_FOUND.toString())
+                .timestamp(LocalDateTime.parse(LocalDateTime.now().format(Constants.formatter), Constants.formatter))
+                .build();
+    }
 }

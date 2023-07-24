@@ -29,6 +29,7 @@ public class AdminUserController {
         return userService.save(userDto);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{userId}")
     public void removeById(@PathVariable Integer userId) {
         log.info("Попытка удаления пользователя с идентификатором: {}", userId);
