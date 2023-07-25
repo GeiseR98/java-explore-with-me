@@ -1,4 +1,4 @@
---DROP TABLE IF EXISTS users, categories, locations, events;
+--DROP TABLE IF EXISTS users, categories, locations, events, compilations, compilations_events CASCADE;
 
 CREATE TABLE IF NOT EXISTS users
 (
@@ -26,7 +26,7 @@ CREATE TABLE if NOT EXISTS events
 (
     id                 BIGINT GENERATED ALWAYS AS IDENTITY  NOT NULL PRIMARY KEY,
     annotation         VARCHAR(256)                         NOT NULL,
-    category_id        INT                                  NOT NULL,
+    category_id        BIGINT                               NOT NULL,
     confirmed_requests INT                                  NOT NULL,
     created_on         TIMESTAMP WITHOUT TIME ZONE,
     description        VARCHAR(1024)                        NOT NULL,
@@ -43,5 +43,19 @@ CREATE TABLE if NOT EXISTS events
     CONSTRAINT fk_categories FOREIGN KEY (category_id)  REFERENCES categories (id),
     CONSTRAINT fk_initiator  FOREIGN KEY (initiator_id) REFERENCES users (id),
     CONSTRAINT fk_locations  FOREIGN KEY (location_id)  REFERENCES locations (id)
+);
+
+CREATE TABLE IF NOT EXISTS compilations
+(
+    id     INT GENERATED ALWAYS AS IDENTITY     NOT NULL PRIMARY KEY,
+    pinned BOOLEAN                              NOT NULL,
+    title  VARCHAR(1024)                        NOT NULL,
+);
+
+CREATE TABLE IF NOT EXISTS compilations_events
+(
+    compilations_id INTEGER REFERENCES compilations (id) ON DELETE CASCADE,
+    events_id       INTEGER REFERENCES events (id)       ON DELETE CASCADE,
+    PRIMARY KEY (compilations_id, events_id)
 );
 
