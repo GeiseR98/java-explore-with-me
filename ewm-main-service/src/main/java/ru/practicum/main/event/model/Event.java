@@ -3,6 +3,7 @@ package ru.practicum.main.event.model;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.practicum.main.category.model.Category;
 import ru.practicum.main.location.model.Location;
 import ru.practicum.main.user.model.User;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "events")
 @AllArgsConstructor
+@NoArgsConstructor
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
