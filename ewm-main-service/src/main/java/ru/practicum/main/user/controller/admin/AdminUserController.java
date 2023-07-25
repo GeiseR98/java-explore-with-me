@@ -9,6 +9,7 @@ import ru.practicum.main.user.dto.UserDto;
 import ru.practicum.main.user.service.UserService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
@@ -31,7 +32,7 @@ public class AdminUserController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{userId}")
-    public void removeById(@PathVariable Integer userId) {
+    public void removeById(@PathVariable @NotNull Integer userId) {
         log.debug("Попытка удаления пользователя с идентификатором: {}", userId);
         userService.removeById(userId);
     }
