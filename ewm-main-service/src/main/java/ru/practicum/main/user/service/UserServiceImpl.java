@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(utility.checkUser(userId).getId());
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     @Override
     public List<UserDto> getUsers(List<Integer> ids, Integer from, Integer size) {
         Pageable page = Page.paged(from, size);

@@ -32,7 +32,7 @@ public class AdminUserController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{userId}")
     public void removeById(@PathVariable Integer userId) {
-        log.info("Попытка удаления пользователя с идентификатором: {}", userId);
+        log.debug("Попытка удаления пользователя с идентификатором: {}", userId);
         userService.removeById(userId);
     }
 

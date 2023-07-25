@@ -16,12 +16,26 @@ import javax.validation.Valid;
 @Slf4j
 @Validated
 public class AdminCategoryController {
-    private final CategoryService categoryService;
+    private final CategoryService catService;
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public CategoryDto createCategory(@RequestBody @Valid CategoryDto categoryDto) {
         log.debug("Попытка добавить новую категорию");
-        return categoryService.save(categoryDto);
+        return catService.save(categoryDto);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{catId}")
+    public void removeById(@PathVariable Integer catId) {
+        log.debug("Попытка удаления категории с идентификатором {}", catId);
+        catService.removeById(catId);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PatchMapping("/{catId}")
+    public CategoryDto changeCategory(@RequestBody @Valid CategoryDto categoryDto) {
+        log.debug("Попытка изменить категорию");
+        return catService.changeCategory(categoryDto);
     }
 }

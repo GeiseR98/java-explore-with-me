@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.main.category.dto.CategoryDto;
 import ru.practicum.main.category.mapper.CategoryMapper;
+import ru.practicum.main.category.model.Category;
 import ru.practicum.main.category.repository.CategoryRepository;
 import ru.practicum.main.utility.Utility;
 
@@ -23,4 +24,20 @@ public class CategoryServiceImpl implements CategoryService{
     public CategoryDto save(CategoryDto categoryDto) {
         return categoryMapper.toDto(categoryRepository.save(categoryMapper.toEntity(categoryDto)));
     }
+
+    @Override
+    @Transactional
+    public void removeById(Integer catId) {
+        categoryRepository.deleteById(utility.checkCategory(catId).getId());
+    }
+
+    @Override
+    @Transactional
+    public CategoryDto changeCategory(CategoryDto categoryDto) {
+        Category cat = utility.checkCategory(categoryDto.getId());
+        cat.setName(categoryDto.getName());
+        return categoryMapper.toDto(categoryRepository.save(cat));
+    }
+
+
 }
