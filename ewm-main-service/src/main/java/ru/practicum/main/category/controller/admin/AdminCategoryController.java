@@ -9,6 +9,8 @@ import ru.practicum.main.category.dto.CategoryDto;
 import ru.practicum.main.category.service.CategoryService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @RestController
 @RequestMapping(path = "/admin/categories")
@@ -27,15 +29,16 @@ public class AdminCategoryController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{catId}")
-    public void removeById(@PathVariable Integer catId) {
+    public void removeById(@PathVariable @NotNull Integer catId) {
         log.debug("Попытка удаления категории с идентификатором {}", catId);
         catService.removeById(catId);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/{catId}")
-    public CategoryDto changeCategory(@RequestBody @Valid CategoryDto categoryDto) {
+    public CategoryDto changeCategory(@PathVariable @NotNull Integer catId,
+                                      @RequestBody @Valid CategoryDto categoryDto) {
         log.debug("Попытка изменить категорию");
-        return catService.changeCategory(categoryDto);
+        return catService.changeCategory(catId, categoryDto);
     }
 }

@@ -13,7 +13,7 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CategoryDto {
-    private int id;
+    private Integer id;
     @NotBlank
     @Length(max = 255)
     private String name;

@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS users
 CREATE TABLE IF NOT EXISTS categories
 (
     id    BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL PRIMARY KEY,
-    name  VARCHAR(255)                        NOT NULL
+    name  VARCHAR(255)                        NOT NULL,
+    UNIQUE (name)
 );
 
 CREATE TABLE if NOT EXISTS locations
