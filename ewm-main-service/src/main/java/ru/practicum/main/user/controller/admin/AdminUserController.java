@@ -22,7 +22,6 @@ import java.util.List;
 public class AdminUserController {
     private final UserService userService;
 
-
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public UserDto createUser(@RequestBody @Valid UserDto userDto) {

@@ -20,7 +20,7 @@ import static ru.practicum.main.utility.Page.paged;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Slf4j
-public class CategoryServiceImpl implements CategoryService{
+public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final Utility utility;
     private final CategoryMapper categoryMapper;

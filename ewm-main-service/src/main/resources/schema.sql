@@ -1,4 +1,4 @@
---DROP TABLE IF EXISTS users, categories, locations, events;
+DROP TABLE IF EXISTS users, categories, locations, events;
 
 CREATE TABLE IF NOT EXISTS users
 (
