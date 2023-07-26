@@ -3,7 +3,7 @@
 CREATE TABLE IF NOT EXISTS users
 (
     id    BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL PRIMARY KEY,
-    name  VARCHAR(256)                        NOT NULL,
+    name  VARCHAR(250)                        NOT NULL,
     email VARCHAR(320)                        NOT NULL,
     UNIQUE (email)
 );
@@ -25,11 +25,11 @@ CREATE TABLE if NOT EXISTS locations
 CREATE TABLE if NOT EXISTS events
 (
     id                 BIGINT GENERATED ALWAYS AS IDENTITY  NOT NULL PRIMARY KEY,
-    annotation         VARCHAR(256)                         NOT NULL,
+    annotation         VARCHAR(2000)                        NOT NULL,
     category_id        BIGINT                               NOT NULL,
     confirmed_requests INT                                  NOT NULL,
     created_on         TIMESTAMP WITHOUT TIME ZONE,
-    description        VARCHAR(1024)                        NOT NULL,
+    description        VARCHAR(7000)                        NOT NULL,
     event_date         TIMESTAMP WITHOUT TIME ZONE,
     initiator_id       INT                                  NOT NULL,
     location_id        INT                                  NOT NULL,
