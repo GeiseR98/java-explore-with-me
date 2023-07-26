@@ -1,4 +1,4 @@
-package ru.practicum.main.category.controller.open;
+package ru.practicum.main.category.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @Validated
-public class OpenCategoryController {
+public class CategoryPublicController {
     private final CategoryService catService;
 
     @ResponseStatus(HttpStatus.OK)

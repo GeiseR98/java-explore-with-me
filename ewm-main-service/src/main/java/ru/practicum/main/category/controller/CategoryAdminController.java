@@ -1,4 +1,4 @@
-package ru.practicum.main.category.controller.admin;
+package ru.practicum.main.category.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 @RequiredArgsConstructor
 @Slf4j
 @Validated
-public class AdminCategoryController {
+public class CategoryAdminController {
     private final CategoryService catService;
 
     @ResponseStatus(HttpStatus.CREATED)
