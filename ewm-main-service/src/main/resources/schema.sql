@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS compilations
 (
     id     INT GENERATED ALWAYS AS IDENTITY     NOT NULL PRIMARY KEY,
     pinned BOOLEAN                              NOT NULL,
-    title  VARCHAR(1024)                        NOT NULL,
+    title  VARCHAR(1024)                        NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS compilations_events
