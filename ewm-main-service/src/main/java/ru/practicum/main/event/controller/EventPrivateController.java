@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.main.event.dto.EventDto;
+import ru.practicum.main.event.dto.NewEventDto;
 import ru.practicum.main.event.service.EventService;
 
 import javax.validation.Valid;
@@ -20,9 +21,9 @@ public class EventPrivateController {
     private final EventService eventService;
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(path = "/{userId}/events")
+    @PostMapping
     public EventDto createEvents(@PathVariable(name = "userId") @Positive Integer userId,
-                                 @RequestBody @Valid EventDto eventDto) {
+                                 @RequestBody @Valid NewEventDto eventDto) {
         log.debug("Попытка добавления нового события.");
         return eventService.createEvents(userId, eventDto);
     }

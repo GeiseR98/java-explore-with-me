@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
-import ru.practicum.main.location.dto.LocationDto;
+import ru.practicum.main.location.model.Location;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class NewEventDto {
+    private Integer id;
     @NotBlank
     @Length(min = 20, max = 2000)
     private String annotation;
@@ -29,13 +30,13 @@ public class NewEventDto {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
     @NotNull
-    private LocationDto location;
+    private Location location;
     @Builder.Default
     private Boolean paid = false;
     @Builder.Default
     private Integer participantLimit = 0;
     @Builder.Default
-    private boolean requestModeration = true;
+    private Boolean requestModeration = true;
     @NotBlank
     @Length(min = 3, max = 120)
     private String title;

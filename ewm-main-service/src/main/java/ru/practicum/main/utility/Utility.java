@@ -30,11 +30,11 @@ public class Utility {
                 new NotFoundException(String.format("Категория с идентификатором =%d не найдена", catId)));
     }
 
-    public void validTime(String time) {
-        LocalDateTime startDate = LocalDateTime.parse(time, Constants.formatter);
-        if (Duration.between(LocalDateTime.now(), startDate).toMinutes() < Duration.ofHours(2).toMinutes()) {
+    public LocalDateTime validTime(LocalDateTime createdOn, LocalDateTime eventDate) {
+        if (Duration.between(createdOn, eventDate).toMinutes() < Duration.ofHours(2).toMinutes()) {
             throw new ValidTimeException("Обратите внимание: дата и время, на которые намечено событие," +
                     " не может быть раньше, чем через два часа от текущего момента");
         }
+        return createdOn;
     }
 }
