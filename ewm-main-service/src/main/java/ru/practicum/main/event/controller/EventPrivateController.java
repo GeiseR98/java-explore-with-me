@@ -6,11 +6,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.main.event.dto.EventDto;
+import ru.practicum.main.event.dto.EventShortDto;
 import ru.practicum.main.event.dto.NewEventDto;
 import ru.practicum.main.event.service.EventService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/users/{userId}/events")
@@ -35,4 +38,15 @@ public class EventPrivateController {
         log.debug("Получение полной информации о событии добавленном текущим пользователем");
         return eventService.getEventByUserFullInfo(userId, eventId);
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping
+    public List<EventShortDto> getEventsByUser(@PathVariable(name = "userId") Integer userId,
+                                              @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
+                                              @RequestParam(name = "from", defaultValue = "10") @Positive Integer size) {
+        log.debug("Получение событий, добавленных текущим пользователем");
+        return eventService.getEventsByUser(userId, from, size);
+
+    }
+
 }
