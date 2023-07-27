@@ -43,4 +43,5 @@ public interface EventMapper {
     EventDto toDto(Event event);
 
     EventShortDto toShortDto(Event event);
+
 }

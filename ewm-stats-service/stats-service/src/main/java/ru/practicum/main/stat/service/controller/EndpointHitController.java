@@ -34,9 +34,9 @@ public class EndpointHitController {
     }
 
     @GetMapping(path = "/stats")
-    public List<ViewStats> stats(@RequestParam(name = "start") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
-                                 @RequestParam(name = "end") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
-                                 @RequestParam(name = "uris", required = false) List<String> uris,
+    public List<ViewStats> stats(@RequestParam(name = "start")  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
+                                 @RequestParam(name = "end")    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
+                                 @RequestParam(name = "uris",   required = false) List<String> uris,
                                  @RequestParam(name = "unique", defaultValue = "false") boolean unique) {
         log.debug("Попытка получить статистику по запросу {}", uris);
         return service.stats(start, end, uris, unique);
