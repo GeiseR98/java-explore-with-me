@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.main.category.dto.CategoryDto;
-import ru.practicum.main.event.model.Status;
+import ru.practicum.main.event.model.EventStatus;
 import ru.practicum.main.location.dto.LocationDto;
 import ru.practicum.main.user.dto.UserShortDto;
 
@@ -39,7 +39,7 @@ public class EventDto {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime publishedOn;
     private Boolean requestModeration;
-    private Status state;
+    private EventStatus state;
     @NotBlank
     private String title;
     private Integer views;

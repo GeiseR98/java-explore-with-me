@@ -12,4 +12,6 @@ public interface EventService {
     EventDto getEventByUserFullInfo(Integer userId, Integer eventId);
 
     List<EventShortDto> getEventsByUser(Integer userId, Integer from, Integer size);
+
+    EventDto getEventById(Integer eventId);
 }

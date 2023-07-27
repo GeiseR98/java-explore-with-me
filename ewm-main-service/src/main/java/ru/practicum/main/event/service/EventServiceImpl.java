@@ -63,4 +63,13 @@ public class EventServiceImpl implements EventService {
                 .map(mapper::toShortDto)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    @Transactional
+    public EventDto getEventById(Integer eventId) {
+        Event event = utility.checkPublishedEvent(eventId);
+        event.setViews(event.getViews() + 1);
+        eventRepository.save(event);
+        return mapper.toDto(event);
+    }
 }
