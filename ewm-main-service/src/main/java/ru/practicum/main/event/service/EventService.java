@@ -5,4 +5,6 @@ import ru.practicum.main.event.dto.NewEventDto;
 
 public interface EventService {
     EventDto createEvents(Integer userId, NewEventDto eventDto);
+
+    EventDto getEventByUserFullInfo(Integer userId, Integer eventId);
 }

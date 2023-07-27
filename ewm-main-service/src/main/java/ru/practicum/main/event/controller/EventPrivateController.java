@@ -28,4 +28,11 @@ public class EventPrivateController {
         return eventService.createEvents(userId, eventDto);
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(path = "/{eventId}")
+    public EventDto getEventByUserFullInfo(@PathVariable(name = "userId") Integer userId,
+                                           @PathVariable(name = "eventId") Integer eventId) {
+        log.debug("Получение полной информации о событии добавленном текущим пользователем");
+        return eventService.getEventByUserFullInfo(userId, eventId);
+    }
 }

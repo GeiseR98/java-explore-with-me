@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.main.category.model.Category;
 import ru.practicum.main.category.repository.CategoryRepository;
+import ru.practicum.main.event.model.Event;
+import ru.practicum.main.event.repository.EventRepository;
 import ru.practicum.main.exception.NotFoundException;
 import ru.practicum.main.exception.ValidTimeException;
 import ru.practicum.main.user.model.User;
@@ -19,6 +21,7 @@ import java.time.LocalDateTime;
 public class Utility {
     private final UserRepository userRepository;
     private final CategoryRepository catRepository;
+    private final EventRepository eventRepository;
 
     public User checkUser(Integer userId) {
         return userRepository.findById(userId).orElseThrow(() ->
@@ -28,6 +31,11 @@ public class Utility {
     public Category checkCategory(Integer catId) {
         return catRepository.findById(catId).orElseThrow(() ->
                 new NotFoundException(String.format("Категория с идентификатором =%d не найдена", catId)));
+    }
+
+    public Event checkEvent(Integer eventId) {
+        return eventRepository.findById(eventId).orElseThrow(() ->
+                new NotFoundException(String.format("Событие с идентификатором =%d не найдено", eventId)));
     }
 
     public LocalDateTime validTime(LocalDateTime createdOn, LocalDateTime eventDate) {
