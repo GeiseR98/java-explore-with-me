@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.main.event.model.Event;
+import ru.practicum.main.user.model.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -22,10 +24,10 @@ public class ParticipationRequest {
     private LocalDateTime created;
     @ManyToOne
     @JoinColumn(name = "event_id")
-    private Integer event;
+    private Event event;
     @ManyToOne
     @JoinColumn(name = "requestor_id")
-    private Integer requestor;
+    private User requestor;
     @Enumerated(EnumType.STRING)
     private ParticipationRequestStatus state;
 }

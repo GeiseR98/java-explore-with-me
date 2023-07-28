@@ -8,13 +8,18 @@ import ru.practicum.main.category.repository.CategoryRepository;
 import ru.practicum.main.event.model.Event;
 import ru.practicum.main.event.model.EventStatus;
 import ru.practicum.main.event.repository.EventRepository;
+import ru.practicum.main.exception.ConflictException;
 import ru.practicum.main.exception.NotFoundException;
 import ru.practicum.main.exception.ValidTimeException;
+import ru.practicum.main.requests.model.ParticipationRequest;
+import ru.practicum.main.requests.repository.ParticipationRequestRepository;
 import ru.practicum.main.user.model.User;
 import ru.practicum.main.user.repository.UserRepository;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +28,7 @@ public class Utility {
     private final UserRepository userRepository;
     private final CategoryRepository catRepository;
     private final EventRepository eventRepository;
+    private final ParticipationRequestRepository requestRepository;
 
     public User checkUser(Integer userId) {
         return userRepository.findById(userId).orElseThrow(() ->
@@ -42,6 +48,29 @@ public class Utility {
     public Event checkPublishedEvent(Integer eventId) {
         return eventRepository.findEventByIdAndStateIs(eventId, EventStatus.PUBLISHED).orElseThrow(() ->
                 new NotFoundException(String.format("Событие с идентификатором =%d не найдено или не опубликовано", eventId)));
+    }
+
+    public Event checkAbilityToParticipationCreateRequest(Integer eventId, Integer userId) {
+        Event event = checkEvent(eventId);
+        if (!event.getState().equals(EventStatus.PUBLISHED)) {
+            throw new ConflictException("Нельзя участвовать в неопубликованном событии");
+        }
+        if (Objects.equals(event.getInitiator().getId(), userId)) {
+            throw new ConflictException("Инициатор события не может добавить запрос на участие в своём событии");
+        }
+        List<ParticipationRequest> existingRequests =
+        requestRepository.findParticipationRequestsByEventsWithRequests_IdAndEventsWithRequests_Initiator_Id(eventId, userId);
+        if (existingRequests != null && !existingRequests.isEmpty()) {
+            for (ParticipationRequest request : existingRequests) {
+                if (Objects.equals(request.getEvent(), eventId)) {
+                    throw new ConflictException("Нельзя добавить повторный запрос ");
+                }
+            }
+        }
+        if (event.getConfirmedRequests() >= event.getParticipantLimit()) {
+            throw new ConflictException("У события достигнут лимит запросов на участие");
+        }
+        return event;
     }
 
     public LocalDateTime validTime(LocalDateTime createdOn, LocalDateTime eventDate) {
