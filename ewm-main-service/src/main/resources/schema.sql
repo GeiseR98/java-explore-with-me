@@ -1,4 +1,4 @@
---DROP TABLE IF EXISTS users, categories, locations, events, compilations, compilations_events CASCADE;
+--DROP TABLE IF EXISTS users, categories, locations, events, requests, compilations, compilations_events CASCADE;
 
 CREATE TABLE IF NOT EXISTS users
 (
@@ -31,7 +31,7 @@ CREATE TABLE if NOT EXISTS events
     created_on         TIMESTAMP WITHOUT TIME ZONE,
     description        VARCHAR(7000)                        NOT NULL,
     event_date         TIMESTAMP WITHOUT TIME ZONE,
-    initiator_id       INT                                  NOT NULL,
+    initiator_id       BIGINT                               NOT NULL,
     location_id        INT                                  NOT NULL,
     paid               BOOLEAN                              NOT NULL,
     participant_limit  INT                                  NOT NULL,
@@ -43,6 +43,17 @@ CREATE TABLE if NOT EXISTS events
     CONSTRAINT fk_categories FOREIGN KEY (category_id)  REFERENCES categories (id),
     CONSTRAINT fk_initiator  FOREIGN KEY (initiator_id) REFERENCES users (id),
     CONSTRAINT fk_locations  FOREIGN KEY (location_id)  REFERENCES locations (id)
+);
+
+CREATE TABLE if NOT EXISTS requests
+(
+    id           BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL PRIMARY KEY,
+    created      TIMESTAMP WITHOUT TIME ZONE         NOT NULL,
+    event_id     BIGINT                              NOT NULL,
+    requestor_id BIGINT                              NOT NULL,
+    state        VARCHAR(50)                         NOT NULL,
+    CONSTRAINT fk_event     FOREIGN KEY (event_id)     REFERENCES events (id),
+    CONSTRAINT fk_requester FOREIGN KEY (requester_id) REFERENCES users (id)
 );
 
 CREATE TABLE IF NOT EXISTS compilations
