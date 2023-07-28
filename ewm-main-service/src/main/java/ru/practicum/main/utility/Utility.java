@@ -73,6 +73,11 @@ public class Utility {
         return event;
     }
 
+    public ParticipationRequest checkParticipationRequest(Integer requestId, Integer userId) {
+        return requestRepository.findParticipationRequestByIdAndRequester_Id(requestId, userId).orElseThrow(() ->
+                new NotFoundException("Запрос не найден или недоступен"));
+    }
+
     public LocalDateTime validTime(LocalDateTime createdOn, LocalDateTime eventDate) {
         if (Duration.between(createdOn, eventDate).toMinutes() < Duration.ofHours(2).toMinutes()) {
             throw new ValidTimeException("Обратите внимание: дата и время, на которые намечено событие," +

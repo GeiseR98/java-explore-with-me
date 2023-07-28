@@ -15,6 +15,8 @@ import ru.practicum.main.user.model.User;
 import ru.practicum.main.utility.Utility;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -46,5 +48,25 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         }
         log.debug("Заявка создана");
         return mapper.toDto(repository.save(participationRequest));
+    }
+
+    @Override
+    public List<ParticipationRequestDto> getRequestsByUserOtherEvents(Integer userId) {
+        log.debug("Найдены запросы на участие");
+        return repository.findParticipationRequestsByRequester_Id(userId).stream()
+                .map(mapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public ParticipationRequestDto cancelRequestsByUserOtherEvents(Integer userId, Integer requestId) {
+        ParticipationRequest request = utility.checkParticipationRequest(requestId, userId);
+        if (request.getState().equals(ParticipationRequestStatus.CONFIRMED)) {
+            Event event = request.getEvent();
+            event.setConfirmedRequests(event.getConfirmedRequests() - 1);
+            eventRepository.save(event);
+        }
+        request.setState(ParticipationRequestStatus.CANCELED);
+        return mapper.toDto(repository.save(request));
     }
 }

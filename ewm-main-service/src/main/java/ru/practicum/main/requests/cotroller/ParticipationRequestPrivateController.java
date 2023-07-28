@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.main.requests.dto.ParticipationRequestDto;
 import ru.practicum.main.requests.service.ParticipationRequestService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(path = "/users/{userId}/requests")
 @RequiredArgsConstructor
@@ -22,5 +24,21 @@ public class ParticipationRequestPrivateController {
                                                               @PathVariable(name = "eventId") Integer eventId) {
         log.debug("Добавление запроса от текущего пользователя на участие в событии");
         return participationRequestService.createRequestsByUserOtherEvents(userId, eventId);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping
+    public List<ParticipationRequestDto> createRequestsByUserOtherEvents(@PathVariable(name = "userId") Integer userId,
+                                                                         @RequestParam(name = "eventId") Integer eventId) {
+        log.debug("Получение информации о заявках текущего пользователя на участие в чужих событиях");
+        return participationRequestService.getRequestsByUserOtherEvents(userId);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PatchMapping(path = "{requestId}/cancel")
+    public ParticipationRequestDto cancelRequestsByUserOtherEvents(@PathVariable(name = "userId") Integer userId,
+                                                                   @PathVariable(name = "requestId") Integer requestId) {
+        log.debug("Отмена своего запроса на участие в событии");
+        return participationRequestService.cancelRequestsByUserOtherEvents(userId, requestId);
     }
 }
