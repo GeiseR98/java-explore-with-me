@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.main.event.dto.EventDto;
 import ru.practicum.main.event.dto.EventShortDto;
 import ru.practicum.main.event.service.EventService;
+import ru.practicum.main.stat.client.StatsClient;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Positive;
@@ -23,6 +24,7 @@ import java.util.List;
 @Validated
 public class EventPublicController {
     private final EventService eventService;
+    private final StatsClient client;
 
 
     @ResponseStatus(HttpStatus.OK)
@@ -30,6 +32,7 @@ public class EventPublicController {
     public EventDto getEventById(@PathVariable(name = "eventId") @Positive Integer eventId,
                                                                            HttpServletRequest request) {
         log.debug("Получение подробной информации об опубликованном событии по его идентификаторе");
+        client.hit(request);
         return eventService.getEventById(eventId);
     }
 
@@ -45,7 +48,8 @@ public class EventPublicController {
                                          @RequestParam(name = "from",          defaultValue = "0")     @PositiveOrZero Integer from,
                                          @RequestParam(name = "size",          defaultValue = "10")    @Positive Integer size,
                                                                                                  HttpServletRequest request) {
-        log.debug("Попытка получения событий по параметрам");
+        log.debug("Попытка получения событий с возможностью фильтрации");
+        client.hit(request);
         return eventService.getEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
     }
 }

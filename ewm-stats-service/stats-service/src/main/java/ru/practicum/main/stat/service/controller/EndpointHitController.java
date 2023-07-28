@@ -29,7 +29,6 @@ public class EndpointHitController {
     @PostMapping(path = "/hit")
     public EndpointHitDto hit(@Valid @RequestBody EndpointHitDto endpointHitDto) {
         log.debug("Создание запроса {}", endpointHitDto);
-        endpointHitDto.setTimestamp(LocalDateTime.now());
         return service.addHit(endpointHitDto);
     }
 

@@ -9,22 +9,37 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.main.stat.dto.EndpointHitDto;
 
+import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @Service
 public class StatsClient extends BaseClient {
+    @Value("${stats-server.url}")
+    private String serverUrl;
+
+    @Value("${main-app.name}")
+    private String appMain;
+
     @Autowired
-    public StatsClient(@Value("${stats-server.url}") String serverUrl, RestTemplateBuilder builder) {
+    public StatsClient(RestTemplateBuilder builder) {
         super(
                 builder
-                        .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
+                        .uriTemplateHandler(new DefaultUriBuilderFactory())
                         .requestFactory(HttpComponentsClientHttpRequestFactory::new)
                         .build()
         );
     }
 
-    public ResponseEntity<Object> hit(EndpointHitDto hitDto) {
-        return post("/hit", null, null, hitDto);
+    public void hit(HttpServletRequest request) {
+        EndpointHitDto hitDto = EndpointHitDto.builder()
+                .app(appMain)
+                .uri(request.getRequestURI())
+                .ip(request.getRemoteAddr())
+                .timestamp(LocalDateTime.now())
+                .build();
+        post(serverUrl + "/hit", hitDto);
+//        post("http://localhost:9090/hit", hitDto);
     }
 
     public ResponseEntity<Object> stats(String start,
