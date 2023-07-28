@@ -15,8 +15,16 @@ import ru.practicum.main.event.model.Event;
 import ru.practicum.main.event.model.EventStatus;
 import ru.practicum.main.event.model.QEvent;
 import ru.practicum.main.event.repository.EventRepository;
+import ru.practicum.main.exception.ConflictException;
 import ru.practicum.main.exception.NotFoundException;
 import ru.practicum.main.location.service.LocationService;
+import ru.practicum.main.requests.dto.EventRequestStatusUpdateRequest;
+import ru.practicum.main.requests.dto.EventRequestStatusUpdateResult;
+import ru.practicum.main.requests.dto.ParticipationRequestDto;
+import ru.practicum.main.requests.mapper.ParticipationRequestMapper;
+import ru.practicum.main.requests.model.ParticipationRequest;
+import ru.practicum.main.requests.model.ParticipationRequestStatus;
+import ru.practicum.main.requests.repository.ParticipationRequestRepository;
 import ru.practicum.main.utility.Filter;
 import ru.practicum.main.utility.Page;
 import ru.practicum.main.utility.QPredicates;
@@ -35,7 +43,9 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final Utility utility;
     private final LocationService locationService;
-    private final EventMapper mapper;
+    private final EventMapper eventMapper;
+    private final ParticipationRequestRepository requestRepository;
+    private final ParticipationRequestMapper requestMapper;
 
     @Override
     @Transactional
@@ -44,20 +54,20 @@ public class EventServiceImpl implements EventService {
 
         log.debug("Попытка добавления нового события.");
 
-        Event event = mapper.toEntity(
+        Event event = eventMapper.toEntity(
                 newEventDto,
                 utility.checkUser(userId),
                 utility.checkCategory(newEventDto.getCategory()),
                 utility.validTime(LocalDateTime.now(), newEventDto.getEventDate()));
 
         event = eventRepository.save(event);
-        return mapper.toDto(event);
+        return eventMapper.toDto(event);
     }
 
     @Override
     @Transactional
     public EventDto getEventByUserFullInfo(Integer userId, Integer eventId) {
-        return mapper.toDto(eventRepository.findEventByIdAndInitiator_Id(
+        return eventMapper.toDto(eventRepository.findEventByIdAndInitiator_Id(
                 utility.checkEvent(eventId).getId(),
                 utility.checkUser(userId).getId())
                 .orElseThrow(() -> new NotFoundException("Вероятно что данное событие создавали не вы")));
@@ -67,7 +77,7 @@ public class EventServiceImpl implements EventService {
     public List<EventShortDto> getEventsByUser(Integer userId, Integer from, Integer size) {
         Pageable page = Page.paged(from, size);
         return eventRepository.findEventsByInitiator_Id(utility.checkUser(userId).getId(), page).stream()
-                .map(mapper::toShortDto)
+                .map(eventMapper::toShortDto)
                 .collect(Collectors.toList());
     }
 
@@ -77,7 +87,7 @@ public class EventServiceImpl implements EventService {
         Event event = utility.checkPublishedEvent(eventId);
         event.setViews(event.getViews() + 1);
         eventRepository.save(event);
-        return mapper.toDto(event);
+        return eventMapper.toDto(event);
     }
 
     @Override
@@ -103,9 +113,69 @@ public class EventServiceImpl implements EventService {
         eventRepository.saveAll(events);
 
         return events.stream()
-                .map(mapper::toShortDto)
+                .map(eventMapper::toShortDto)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    @Transactional
+    public List<ParticipationRequestDto> getRequestsByUser(Integer userId, Integer eventId) {
+        log.debug("Найдены запросы на участие");
+        return requestRepository.findParticipationRequestsByEvent_IdAndEvent_Initiator_Id(eventId, userId).stream()
+                .map(requestMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public EventRequestStatusUpdateResult changeStatusRequestsByUser(Integer userId, Integer eventId, EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest) {
+        List<ParticipationRequest> requestList = requestRepository.findParticipationRequestsByEvent_IdAndEvent_Initiator_Id(eventId, userId);
+
+        if (requestList.isEmpty()) {
+            throw new NotFoundException("Событие не найдено или недоступно");
+        }
+
+        Event event = utility.checkEvent(eventId);
+
+        for (ParticipationRequest request : requestList) {
+            boolean isUnlimitedParticipantsOrModerationDisabled = (request.getEvent().getParticipantLimit() == 0) ||
+                    !request.getEvent().getRequestModeration();
+            boolean isParticipantLimitReached = request.getEvent().getConfirmedRequests() >= request.getEvent().getParticipantLimit();
+            boolean isRequestPending = request.getState().equals(ParticipationRequestStatus.PENDING);
+
+            if (isUnlimitedParticipantsOrModerationDisabled) {
+                request.setState(ParticipationRequestStatus.CONFIRMED);
+                event.setConfirmedRequests(event.getConfirmedRequests() + 1);
+            } else if (isRequestPending) {
+                if (isParticipantLimitReached) {
+                    request.setState(ParticipationRequestStatus.REJECTED);
+                } else {
+                    request.setState(eventRequestStatusUpdateRequest.getStatus());
+                    if (request.getState().equals(ParticipationRequestStatus.CONFIRMED)) {
+                        event.setConfirmedRequests(event.getConfirmedRequests() + 1);
+                    }
+                }
+            } else {
+                throw new ConflictException("Нарушение целостности данных.");
+            }
+        }
+
+        List<ParticipationRequestDto> requestsConfirmed = new ArrayList<>();
+        List<ParticipationRequestDto> requestsRejected = new ArrayList<>();
+
+        for (ParticipationRequest request : requestList) {
+            if (request.getState().equals(ParticipationRequestStatus.CONFIRMED)) {
+                requestsConfirmed.add(requestMapper.toDto(request));
+            }
+            if (request.getState().equals(ParticipationRequestStatus.REJECTED)) {
+                requestsRejected.add(requestMapper.toDto(request));
+            }
+        }
+        return EventRequestStatusUpdateResult.builder()
+                .confirmedRequests(requestsConfirmed)
+                .rejectedRequests(requestsRejected)
+                .build();
+    }
+
 
     private Predicate getPredicates(Filter filter) {
         LocalDateTime timeNow = checkDate(filter);

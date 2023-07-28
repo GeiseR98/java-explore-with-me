@@ -53,7 +53,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     @Override
     public List<ParticipationRequestDto> getRequestsByUserOtherEvents(Integer userId) {
         log.debug("Найдены запросы на участие");
-        return repository.findParticipationRequestsByRequester_Id(userId).stream()
+        return repository.findParticipationRequestsByRequestor_Id(userId).stream()
                 .map(mapper::toDto)
                 .collect(Collectors.toList());
     }

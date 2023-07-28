@@ -9,6 +9,9 @@ import ru.practicum.main.event.dto.EventDto;
 import ru.practicum.main.event.dto.EventShortDto;
 import ru.practicum.main.event.dto.NewEventDto;
 import ru.practicum.main.event.service.EventService;
+import ru.practicum.main.requests.dto.EventRequestStatusUpdateRequest;
+import ru.practicum.main.requests.dto.EventRequestStatusUpdateResult;
+import ru.practicum.main.requests.dto.ParticipationRequestDto;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -47,6 +50,22 @@ public class EventPrivateController {
         log.debug("Получение событий, добавленных текущим пользователем");
         return eventService.getEventsByUser(userId, from, size);
 
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(path = "/{eventId}/requests")
+    public List<ParticipationRequestDto> getRequestsByUser(@PathVariable(name = "userId") Integer userId,
+                                                           @PathVariable(name = "eventId") Integer eventId) {
+        log.debug("Получение информации о запросах на участие в событии текущего пользователя");
+        return eventService.getRequestsByUser(userId, eventId);
+    }
+
+    @PatchMapping(path = "/{eventId}/requests")
+    public EventRequestStatusUpdateResult changeStatusRequestsByUser(@PathVariable(name = "userId") Integer userId,
+                                                                     @PathVariable(name = "eventId") Integer eventId,
+                                                                     @RequestBody EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest) {
+        log.debug("Изменение статуса (подтверждена, отменена) заявок на участие в событии текущего пользователя");
+        return eventService.changeStatusRequestsByUser(userId, eventId, eventRequestStatusUpdateRequest);
     }
 
 }

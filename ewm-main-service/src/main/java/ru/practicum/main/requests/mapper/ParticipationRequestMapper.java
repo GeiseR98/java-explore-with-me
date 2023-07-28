@@ -12,7 +12,14 @@ import ru.practicum.main.requests.model.ParticipationRequest;
 public interface ParticipationRequestMapper {
     ParticipationRequestMapper INSTANCE = Mappers.getMapper(ParticipationRequestMapper.class);
 
-    ParticipationRequestDto toDto(ParticipationRequest request);
+    default ParticipationRequestDto toDto(ParticipationRequest request) {
+        return ParticipationRequestDto.builder()
+                .id(request.getId())
+                .created(request.getCreated())
+                .event(request.getEvent().getId())
+                .requestor(request.getRequestor().getId())
+                .state(request.getState())
+                .build();
+    }
 
-    ParticipationRequest toEntity(ParticipationRequestDto requestDto);
 }

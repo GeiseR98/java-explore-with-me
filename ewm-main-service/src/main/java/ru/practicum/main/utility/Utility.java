@@ -59,7 +59,7 @@ public class Utility {
             throw new ConflictException("Инициатор события не может добавить запрос на участие в своём событии");
         }
         List<ParticipationRequest> existingRequests =
-        requestRepository.findParticipationRequestsByEventsWithRequests_IdAndEventsWithRequests_Initiator_Id(eventId, userId);
+        requestRepository.findParticipationRequestsByEvent_IdAndEvent_Initiator_Id(eventId, userId);
         if (existingRequests != null && !existingRequests.isEmpty()) {
             for (ParticipationRequest request : existingRequests) {
                 if (Objects.equals(request.getEvent(), eventId)) {
@@ -74,7 +74,7 @@ public class Utility {
     }
 
     public ParticipationRequest checkParticipationRequest(Integer requestId, Integer userId) {
-        return requestRepository.findParticipationRequestByIdAndRequester_Id(requestId, userId).orElseThrow(() ->
+        return requestRepository.findParticipationRequestByIdAndRequestor_Id(requestId, userId).orElseThrow(() ->
                 new NotFoundException("Запрос не найден или недоступен"));
     }
 

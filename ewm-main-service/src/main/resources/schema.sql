@@ -53,7 +53,7 @@ CREATE TABLE if NOT EXISTS requests
     requestor_id BIGINT                              NOT NULL,
     state        VARCHAR(50)                         NOT NULL,
     CONSTRAINT fk_event     FOREIGN KEY (event_id)     REFERENCES events (id),
-    CONSTRAINT fk_requester FOREIGN KEY (requester_id) REFERENCES users (id)
+    CONSTRAINT fk_requestor FOREIGN KEY (requestor_id) REFERENCES users (id)
 );
 
 CREATE TABLE IF NOT EXISTS compilations
