@@ -29,6 +29,7 @@ public class EventDto {
     private LocalDateTime createdOn;
     private String description;
     @NotNull
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
     @NotNull
     private UserShortDto initiator;
