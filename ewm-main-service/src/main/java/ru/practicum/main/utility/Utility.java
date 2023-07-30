@@ -78,10 +78,10 @@ public class Utility {
                 new NotFoundException("Запрос не найден или недоступен"));
     }
 
-    public LocalDateTime validTime(LocalDateTime createdOn, LocalDateTime eventDate) {
-        if (Duration.between(createdOn, eventDate).toMinutes() < Duration.ofHours(2).toMinutes()) {
-            throw new ValidTimeException("Обратите внимание: дата и время, на которые намечено событие," +
-                    " не может быть раньше, чем через два часа от текущего момента");
+    public LocalDateTime validTime(LocalDateTime createdOn, LocalDateTime eventDate, Integer difference) {
+        if (Duration.between(createdOn, eventDate).toMinutes() < Duration.ofHours(difference).toMinutes()) {
+            throw new ValidTimeException(String.format("Обратите внимание: дата и время, на которые намечено событие," +
+                    " не может быть раньше, чем через =%d час/часа от текущего момента", difference));
         }
         return createdOn;
     }

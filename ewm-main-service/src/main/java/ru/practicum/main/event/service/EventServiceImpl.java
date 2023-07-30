@@ -8,17 +8,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.main.category.mapper.CategoryMapper;
-import ru.practicum.main.event.dto.EventDto;
-import ru.practicum.main.event.dto.EventShortDto;
-import ru.practicum.main.event.dto.NewEventDto;
-import ru.practicum.main.event.dto.UpdateEventUserRequest;
+import ru.practicum.main.event.dto.*;
 import ru.practicum.main.event.mapper.EventMapper;
 import ru.practicum.main.event.model.Event;
 import ru.practicum.main.event.model.EventStatus;
 import ru.practicum.main.event.model.QEvent;
+import ru.practicum.main.event.model.StateActionAdmin;
 import ru.practicum.main.event.repository.EventRepository;
 import ru.practicum.main.exception.ConflictException;
 import ru.practicum.main.exception.NotFoundException;
+import ru.practicum.main.exception.ValidTimeException;
+import ru.practicum.main.location.model.Location;
 import ru.practicum.main.location.service.LocationService;
 import ru.practicum.main.requests.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.main.requests.dto.EventRequestStatusUpdateResult;
@@ -31,7 +31,9 @@ import ru.practicum.main.utility.Filter;
 import ru.practicum.main.utility.Page;
 import ru.practicum.main.utility.QPredicates;
 import ru.practicum.main.utility.Utility;
+import ru.practicum.main.category.model.Category;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +63,7 @@ public class EventServiceImpl implements EventService {
                 newEventDto,
                 utility.checkUser(userId),
                 utility.checkCategory(newEventDto.getCategory()),
-                utility.validTime(LocalDateTime.now(), newEventDto.getEventDate()));
+                utility.validTime(LocalDateTime.now(), newEventDto.getEventDate(), 2));
 
         event = eventRepository.save(event);
         return eventMapper.toDto(event);
@@ -71,8 +73,8 @@ public class EventServiceImpl implements EventService {
     @Transactional
     public EventDto getEventByUserFullInfo(Integer userId, Integer eventId) {
         return eventMapper.toDto(eventRepository.findEventByIdAndInitiator_Id(
-                utility.checkEvent(eventId).getId(),
-                utility.checkUser(userId).getId())
+                        utility.checkEvent(eventId).getId(),
+                        utility.checkUser(userId).getId())
                 .orElseThrow(() -> new NotFoundException("Вероятно что данное событие создавали не вы")));
     }
 
@@ -185,7 +187,7 @@ public class EventServiceImpl implements EventService {
 
         if (event.getState().equals(EventStatus.PENDING) || event.getState().equals(EventStatus.CANCELED)) {
             if (updateEventUserRequest.getEventDate() != null) {
-                utility.validTime(LocalDateTime.now(), updateEventUserRequest.getEventDate());
+                utility.validTime(LocalDateTime.now(), updateEventUserRequest.getEventDate(), 2);
                 event.setEventDate(updateEventUserRequest.getEventDate());
             }
             if (updateEventUserRequest.getAnnotation() != null) {
@@ -230,6 +232,61 @@ public class EventServiceImpl implements EventService {
         }
     }
 
+    @Override
+    public EventDto changeEvents(Integer eventId, UpdateEventAdminRequest updateEventAdminRequest) {
+        Event event = utility.checkEvent(eventId);
+
+        if (updateEventAdminRequest.getAnnotation() != null) {
+            event.setAnnotation(updateEventAdminRequest.getAnnotation());
+        }
+        if (updateEventAdminRequest.getCategory() != null) {
+            Category category = utility.checkCategory(updateEventAdminRequest.getCategory());
+            event.setCategory(category);
+        }
+        if (updateEventAdminRequest.getDescription() != null) {
+            event.setDescription(updateEventAdminRequest.getDescription());
+        }
+        if (updateEventAdminRequest.getEventDate() != null) {
+            event.setEventDate(updateEventAdminRequest.getEventDate());
+        }
+        if (updateEventAdminRequest.getLocation() != null) {
+            Location location = locationService.save(updateEventAdminRequest.getLocation());
+            event.setLocation(location);
+        }
+        if (updateEventAdminRequest.getPaid() != null) {
+            event.setPaid(updateEventAdminRequest.getPaid());
+        }
+        if (updateEventAdminRequest.getParticipantLimit() != null) {
+            event.setParticipantLimit(updateEventAdminRequest.getParticipantLimit());
+        }
+        if (updateEventAdminRequest.getRequestModeration() != null) {
+            event.setRequestModeration(updateEventAdminRequest.getRequestModeration());
+        }
+        if (updateEventAdminRequest.getTitle() != null) {
+            event.setTitle(updateEventAdminRequest.getTitle());
+        }
+        if (updateEventAdminRequest.getStateAction() != null) {
+            if (updateEventAdminRequest.getStateAction().equals(StateActionAdmin.PUBLISH_EVENT)) {
+                if (event.getState().equals(EventStatus.PENDING)) {
+                    event.setPublishedOn(utility.validTime(LocalDateTime.now(), event.getEventDate(), 1));
+                    event.setState(EventStatus.PUBLISHED);
+                    return eventMapper.toDto(eventRepository.save(event));
+                } else {
+                    throw new ConflictException("событие можно публиковать, только если оно в состоянии ожидания публикации");
+                }
+            }
+            if (updateEventAdminRequest.getStateAction().equals(StateActionAdmin.REJECT_EVENT)) {
+                if (!event.getState().equals(EventStatus.PUBLISHED)) {
+                    event.setState(EventStatus.CANCELED);
+                    return eventMapper.toDto(eventRepository.save(event));
+                } else {
+                    throw new ConflictException("событие можно отклонить, только если оно еще не опубликовано");
+                }
+            }
+        }
+        log.debug("Событие отредактировано");
+        return eventMapper.toDto(eventRepository.save(event));
+    }
 
     private Predicate getPredicates(Filter filter) {
         LocalDateTime timeNow = checkDate(filter);
