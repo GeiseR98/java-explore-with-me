@@ -3,6 +3,7 @@ package ru.practicum.main.event.service;
 import ru.practicum.main.event.dto.EventDto;
 import ru.practicum.main.event.dto.EventShortDto;
 import ru.practicum.main.event.dto.NewEventDto;
+import ru.practicum.main.event.dto.UpdateEventUserRequest;
 import ru.practicum.main.requests.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.main.requests.dto.EventRequestStatusUpdateResult;
 import ru.practicum.main.requests.dto.ParticipationRequestDto;
@@ -26,4 +27,6 @@ public interface EventService {
     List<ParticipationRequestDto> getRequestsByUser(Integer userId, Integer eventId);
 
     EventRequestStatusUpdateResult changeStatusRequestsByUser(Integer userId, Integer eventId, EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest);
+
+    EventDto changeEventsByUser(Integer userId, Integer eventId, UpdateEventUserRequest updateEventUserRequest);
 }

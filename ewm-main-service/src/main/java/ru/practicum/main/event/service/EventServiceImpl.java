@@ -7,9 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.main.category.mapper.CategoryMapper;
 import ru.practicum.main.event.dto.EventDto;
 import ru.practicum.main.event.dto.EventShortDto;
 import ru.practicum.main.event.dto.NewEventDto;
+import ru.practicum.main.event.dto.UpdateEventUserRequest;
 import ru.practicum.main.event.mapper.EventMapper;
 import ru.practicum.main.event.model.Event;
 import ru.practicum.main.event.model.EventStatus;
@@ -46,6 +48,7 @@ public class EventServiceImpl implements EventService {
     private final EventMapper eventMapper;
     private final ParticipationRequestRepository requestRepository;
     private final ParticipationRequestMapper requestMapper;
+    private final CategoryMapper categoryMapper;
 
     @Override
     @Transactional
@@ -174,6 +177,57 @@ public class EventServiceImpl implements EventService {
                 .confirmedRequests(requestsConfirmed)
                 .rejectedRequests(requestsRejected)
                 .build();
+    }
+
+    @Override
+    public EventDto changeEventsByUser(Integer userId, Integer eventId, UpdateEventUserRequest updateEventUserRequest) {
+        Event event = utility.checkEvent(eventId);
+
+        if (event.getState().equals(EventStatus.PENDING) || event.getState().equals(EventStatus.CANCELED)) {
+            if (updateEventUserRequest.getEventDate() != null) {
+                utility.validTime(LocalDateTime.now(), updateEventUserRequest.getEventDate());
+                event.setEventDate(updateEventUserRequest.getEventDate());
+            }
+            if (updateEventUserRequest.getAnnotation() != null) {
+                event.setAnnotation(updateEventUserRequest.getAnnotation());
+            }
+            if (updateEventUserRequest.getCategory() != null) {
+                event.setCategory(categoryMapper.toEntity(updateEventUserRequest.getCategory()));
+            }
+            if (updateEventUserRequest.getDescription() != null) {
+                event.setDescription(updateEventUserRequest.getDescription());
+            }
+            if (updateEventUserRequest.getLocation() != null) {
+                event.setLocation(updateEventUserRequest.getLocation());
+            }
+            if (updateEventUserRequest.getPaid() != null) {
+                event.setPaid(updateEventUserRequest.getPaid());
+            }
+            if (updateEventUserRequest.getParticipantLimit() != null) {
+                event.setParticipantLimit(updateEventUserRequest.getParticipantLimit());
+            }
+            if (updateEventUserRequest.getRequestModeration() != null) {
+                event.setRequestModeration(updateEventUserRequest.getRequestModeration());
+            }
+            if (updateEventUserRequest.getStateAction() != null) {
+                switch (updateEventUserRequest.getStateAction()) {
+                    case SEND_TO_REVIEW:
+                        event.setState(EventStatus.PENDING);
+                        break;
+                    case CANCEL_REVIEW:
+                        event.setState(EventStatus.CANCELED);
+                        break;
+                }
+            }
+            if (updateEventUserRequest.getTitle() != null) {
+                event.setTitle(updateEventUserRequest.getTitle());
+            }
+
+            log.debug("Событие обновлено");
+            return eventMapper.toDto(eventRepository.save(event));
+        } else {
+            throw new ConflictException("Событие не удовлетворяет правилам редактирования");
+        }
     }
 
 

@@ -12,6 +12,7 @@ import ru.practicum.main.event.service.EventService;
 import ru.practicum.main.requests.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.main.requests.dto.EventRequestStatusUpdateResult;
 import ru.practicum.main.requests.dto.ParticipationRequestDto;
+import ru.practicum.main.event.dto.UpdateEventUserRequest;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -49,7 +50,14 @@ public class EventPrivateController {
                                               @RequestParam(name = "from", defaultValue = "10") @Positive Integer size) {
         log.debug("Получение событий, добавленных текущим пользователем");
         return eventService.getEventsByUser(userId, from, size);
+    }
 
+    @PatchMapping(path = "{userId}/events/{eventId}")
+    public EventDto changeEventsByUser(@PathVariable(name = "userId") Integer userId,
+                                       @PathVariable(name = "eventId") Integer eventId,
+                                       @RequestBody @Valid UpdateEventUserRequest updateEventUserRequest) {
+        log.debug("Изменение события добавленного текущим пользователем");
+        return eventService.changeEventsByUser(userId, eventId, updateEventUserRequest);
     }
 
     @ResponseStatus(HttpStatus.OK)
