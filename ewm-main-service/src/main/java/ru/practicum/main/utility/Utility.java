@@ -52,7 +52,7 @@ public class Utility {
 
     public Event checkAbilityToParticipationCreateRequest(Integer eventId, Integer userId) {
         Event event = checkEvent(eventId);
-        if (!event.getState().equals(EventStatus.PUBLISHED)) {
+        if (event.getState().equals(EventStatus.PENDING) || event.getState().equals(EventStatus.CANCELED)) {
             throw new ConflictException("Нельзя участвовать в неопубликованном событии");
         }
         if (Objects.equals(event.getInitiator().getId(), userId)) {

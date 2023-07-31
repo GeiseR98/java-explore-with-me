@@ -52,7 +52,8 @@ public class EventPrivateController {
         return eventService.getEventsByUser(userId, from, size);
     }
 
-    @PatchMapping(path = "{userId}/events/{eventId}")
+    @ResponseStatus(HttpStatus.OK)
+    @PatchMapping(path = "/{eventId}")
     public EventDto changeEventsByUser(@PathVariable(name = "userId") Integer userId,
                                        @PathVariable(name = "eventId") Integer eventId,
                                        @RequestBody @Valid UpdateEventUserRequest updateEventUserRequest) {
@@ -68,6 +69,7 @@ public class EventPrivateController {
         return eventService.getRequestsByUser(userId, eventId);
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @PatchMapping(path = "/{eventId}/requests")
     public EventRequestStatusUpdateResult changeStatusRequestsByUser(@PathVariable(name = "userId") Integer userId,
                                                                      @PathVariable(name = "eventId") Integer eventId,

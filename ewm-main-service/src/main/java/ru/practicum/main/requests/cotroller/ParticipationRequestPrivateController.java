@@ -21,7 +21,7 @@ public class ParticipationRequestPrivateController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public ParticipationRequestDto createParticipationRequest(@PathVariable(name = "userId") Integer userId,
-                                                              @PathVariable(name = "eventId") Integer eventId) {
+                                                              @RequestParam(name = "eventId") Integer eventId) {
         log.debug("Добавление запроса от текущего пользователя на участие в событии");
         return participationRequestService.createRequestsByUserOtherEvents(userId, eventId);
     }

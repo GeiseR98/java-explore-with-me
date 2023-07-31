@@ -17,9 +17,8 @@ public interface ParticipationRequestMapper {
                 .id(request.getId())
                 .created(request.getCreated())
                 .event(request.getEvent().getId())
-                .requestor(request.getRequestor().getId())
-                .state(request.getState())
+                .requester(request.getRequestor().getId())
+                .status(request.getState())
                 .build();
     }
-
 }

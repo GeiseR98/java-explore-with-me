@@ -21,6 +21,6 @@ public class ParticipationRequestDto {
     @NotNull
     private Integer event;
     @NotNull
-    private Integer requestor;
-    private ParticipationRequestStatus state;
+    private Integer requester;
+    private ParticipationRequestStatus status;
 }
