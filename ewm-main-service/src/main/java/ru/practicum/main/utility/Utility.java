@@ -45,6 +45,15 @@ public class Utility {
                 new NotFoundException(String.format("Событие с идентификатором =%d не найдено", eventId)));
     }
 
+    public List<Event> checkEvents(List<Integer> eventIds) {
+        List<Event> events = eventRepository.findAllById(eventIds);
+        if (events.size() == eventIds.size()) {
+            return events;
+        } else {
+            throw new NotFoundException("Запрос составлен некорректно");
+        }
+    }
+
     public Event checkPublishedEvent(Integer eventId) {
         return eventRepository.findEventByIdAndStateIs(eventId, EventStatus.PUBLISHED).orElseThrow(() ->
                 new NotFoundException(String.format("Событие с идентификатором =%d не найдено или не опубликовано", eventId)));

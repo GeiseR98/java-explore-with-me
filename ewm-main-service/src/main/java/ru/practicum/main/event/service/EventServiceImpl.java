@@ -94,6 +94,11 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    public List<Event> findEventsByIds(List<Integer> eventIds) {
+        return utility.checkEvents(eventIds);
+    }
+
+    @Override
     @Transactional
     public List<EventShortDto> getEvents(String text, List<Integer> categories, Boolean paid,
                                          LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable,
