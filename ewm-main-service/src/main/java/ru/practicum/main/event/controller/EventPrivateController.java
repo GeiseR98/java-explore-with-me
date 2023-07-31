@@ -47,7 +47,7 @@ public class EventPrivateController {
     @GetMapping
     public List<EventShortDto> getEventsByUser(@PathVariable(name = "userId") Integer userId,
                                               @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
-                                              @RequestParam(name = "from", defaultValue = "10") @Positive Integer size) {
+                                              @RequestParam(name = "size", defaultValue = "10") @Positive Integer size) {
         log.debug("Получение событий, добавленных текущим пользователем");
         return eventService.getEventsByUser(userId, from, size);
     }

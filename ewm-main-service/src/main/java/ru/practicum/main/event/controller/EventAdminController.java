@@ -24,10 +24,10 @@ import java.util.List;
 public class EventAdminController {
     private final EventService eventService;
 
-    @ResponseStatus(HttpStatus.OK)
+//    @ResponseStatus(HttpStatus.OK)
     @PatchMapping(path = "/{eventId}")
     public EventDto changeEvents(@PathVariable(name = "eventId") @Positive Integer eventId,
-                                 @RequestBody @Valid UpdateEventAdminRequest updateEventAdminRequest) {
+                                     @RequestBody @Valid UpdateEventAdminRequest updateEventAdminRequest) {
         log.debug("Редактирование данных события и его статуса (отклонение/публикация).");
         return eventService.changeEvents(eventId, updateEventAdminRequest);
     }

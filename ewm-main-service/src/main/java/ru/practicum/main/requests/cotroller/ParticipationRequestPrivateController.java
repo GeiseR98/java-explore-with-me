@@ -28,8 +28,7 @@ public class ParticipationRequestPrivateController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    public List<ParticipationRequestDto> createRequestsByUserOtherEvents(@PathVariable(name = "userId") Integer userId,
-                                                                         @RequestParam(name = "eventId") Integer eventId) {
+    public List<ParticipationRequestDto> getRequestsByUserOtherEvents(@PathVariable(name = "userId") Integer userId) {
         log.debug("Получение информации о заявках текущего пользователя на участие в чужих событиях");
         return participationRequestService.getRequestsByUserOtherEvents(userId);
     }

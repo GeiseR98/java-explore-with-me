@@ -38,8 +38,8 @@ public class StatsClient extends BaseClient {
                 .ip(request.getRemoteAddr())
                 .timestamp(LocalDateTime.now())
                 .build();
-        post(serverUrl + "/hit", hitDto);
-//        post("http://localhost:9090/hit", hitDto);
+//        post(serverUrl + "/hit", hitDto);
+        post("http://localhost:9090/hit", hitDto);
     }
 
     public ResponseEntity<Object> stats(String start,
