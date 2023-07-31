@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 public class NewCompilationDto {
     @UniqueElements
-    private List<Integer> events;
+    private List<Integer> eventIds;
     @Builder.Default
     private Boolean pinned = false;
     @NotBlank
