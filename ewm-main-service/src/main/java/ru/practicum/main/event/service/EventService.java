@@ -28,4 +28,8 @@ public interface EventService {
     EventDto changeEventsByUser(Integer userId, Integer eventId, UpdateEventUserRequest updateEventUserRequest);
 
     EventDto changeEvents(Integer eventId, UpdateEventAdminRequest updateEventAdminRequest);
+
+    List<EventDto> findEvents(List<Integer> users, List<String> states, List<Integer> categories,
+                              LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size);
+
 }

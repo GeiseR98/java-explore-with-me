@@ -110,6 +110,7 @@ public class EventServiceImpl implements EventService {
                 .onlyAvailable(onlyAvailable)
                 .build();
         Predicate predicate = getPredicates(filter);
+        log.debug("События найдены");
         List<Event> events = eventRepository.findAll(predicate, page).stream()
                 .collect(Collectors.toList());
 
@@ -119,6 +120,33 @@ public class EventServiceImpl implements EventService {
 
         return events.stream()
                 .map(eventMapper::toShortDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public List<EventDto> findEvents(List<Integer> users, List<String> states, List<Integer> categories,
+                                     LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size) {
+        Pageable page = Page.paged(from, size);
+        Filter filter = Filter.builder()
+                .users(users)
+                .states(states.stream().map(state -> EventStatus.valueOf(state.toUpperCase())).collect(Collectors.toList()))
+                .categories(categories)
+                .rangeStart(rangeStart)
+                .rangeEnd(rangeEnd)
+                .build();
+
+        Predicate predicate = QPredicates.builder()
+                .add(filter.getUsers(), QEvent.event.initiator.id::in)
+                .add(filter.getStates(), QEvent.event.state::in)
+                .add(filter.getCategories(), QEvent.event.category.id::in)
+                .add(filter.getRangeStart(), QEvent.event.eventDate::goe)
+                .add(filter.getRangeEnd(), QEvent.event.eventDate::loe)
+                .buildAnd();
+
+        log.debug("События найдены");
+        return eventRepository.findAll(predicate, page).stream()
+                .map(eventMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -233,6 +261,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventDto changeEvents(Integer eventId, UpdateEventAdminRequest updateEventAdminRequest) {
         Event event = utility.checkEvent(eventId);
 
