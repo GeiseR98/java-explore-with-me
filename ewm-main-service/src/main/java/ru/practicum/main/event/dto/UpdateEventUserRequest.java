@@ -1,8 +1,10 @@
 package ru.practicum.main.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import ru.practicum.main.category.dto.CategoryDto;
 import ru.practicum.main.event.model.StateActionUser;
@@ -12,6 +14,8 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UpdateEventUserRequest {
     @Length(min = 20, max = 2000)
     private String annotation;

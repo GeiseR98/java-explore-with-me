@@ -17,7 +17,6 @@ import ru.practicum.main.event.model.StateActionAdmin;
 import ru.practicum.main.event.repository.EventRepository;
 import ru.practicum.main.exception.ConflictException;
 import ru.practicum.main.exception.NotFoundException;
-import ru.practicum.main.exception.ValidTimeException;
 import ru.practicum.main.location.model.Location;
 import ru.practicum.main.location.service.LocationService;
 import ru.practicum.main.requests.dto.EventRequestStatusUpdateRequest;
@@ -33,7 +32,6 @@ import ru.practicum.main.utility.QPredicates;
 import ru.practicum.main.utility.Utility;
 import ru.practicum.main.category.model.Category;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
