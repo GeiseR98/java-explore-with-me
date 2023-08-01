@@ -61,7 +61,7 @@ public class EventServiceImpl implements EventService {
                 newEventDto,
                 utility.checkUser(userId),
                 utility.checkCategory(newEventDto.getCategory()),
-                utility.validTime(LocalDateTime.now(), newEventDto.getEventDate(), 2));
+                utility.validTimeEventDate(LocalDateTime.now(), newEventDto.getEventDate(), 2));
 
         event = eventRepository.save(event);
         return eventMapper.toDto(event);
@@ -218,7 +218,7 @@ public class EventServiceImpl implements EventService {
 
         if (event.getState().equals(EventStatus.PENDING) || event.getState().equals(EventStatus.CANCELED)) {
             if (updateEventUserRequest.getEventDate() != null) {
-                utility.validTime(LocalDateTime.now(), updateEventUserRequest.getEventDate(), 2);
+                utility.validTimeEventDate(LocalDateTime.now(), updateEventUserRequest.getEventDate(), 2);
                 event.setEventDate(updateEventUserRequest.getEventDate());
             }
             if (updateEventUserRequest.getAnnotation() != null) {
@@ -297,10 +297,11 @@ public class EventServiceImpl implements EventService {
         if (updateEventAdminRequest.getTitle() != null) {
             event.setTitle(updateEventAdminRequest.getTitle());
         }
+
         if (updateEventAdminRequest.getStateAction() != null) {
             if (updateEventAdminRequest.getStateAction().equals(StateActionAdmin.PUBLISH_EVENT)) {
                 if (event.getState().equals(EventStatus.PENDING)) {
-                    event.setPublishedOn(utility.validTime(LocalDateTime.now(), event.getEventDate(), 1));
+                    event.setPublishedOn(utility.validTimePublication(LocalDateTime.now(), event.getEventDate(), 1));
                     event.setState(EventStatus.PUBLISHED);
                     return eventMapper.toDto(eventRepository.save(event));
                 } else {
@@ -314,6 +315,13 @@ public class EventServiceImpl implements EventService {
                 } else {
                     throw new ConflictException("событие можно отклонить, только если оно еще не опубликовано");
                 }
+            }
+        }
+        if (updateEventAdminRequest.getEventDate() != null) {
+            if (event.getPublishedOn() != null) {
+                event.setEventDate(utility.validTimeEventDate(event.getPublishedOn(), updateEventAdminRequest.getEventDate(), 1));
+            } else {
+                event.setEventDate(utility.validTimeEventDate(LocalDateTime.now(), updateEventAdminRequest.getEventDate(), 1));
             }
         }
         log.debug("Событие отредактировано");

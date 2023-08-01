@@ -79,8 +79,10 @@ public class Utility {
                 }
             }
         }
-        if (event.getConfirmedRequests() >= event.getParticipantLimit()) {
-            throw new ConflictException("У события достигнут лимит запросов на участие");
+        if (event.getParticipantLimit() != 0) {
+            if (event.getConfirmedRequests() >= event.getParticipantLimit()) {
+                throw new ConflictException("У события достигнут лимит запросов на участие");
+            }
         }
         return event;
     }
@@ -95,11 +97,23 @@ public class Utility {
                 new NotFoundException(String.format("Подборка с идентификатором =%d не найдена.", compilationId)));
     }
 
-    public LocalDateTime validTime(LocalDateTime createdOn, LocalDateTime eventDate, Integer difference) {
+    public LocalDateTime validTimePublication(LocalDateTime createdOn, LocalDateTime eventDate, Integer difference) {
         if (Duration.between(createdOn, eventDate).toMinutes() < Duration.ofHours(difference).toMinutes()) {
             throw new ValidTimeException(String.format("Обратите внимание: дата и время, на которые намечено событие," +
                     " не может быть раньше, чем через =%d час/часа от текущего момента", difference));
         }
         return createdOn;
+    }
+
+    public LocalDateTime validTimeEventDate(LocalDateTime publishedOn, LocalDateTime eventDate, Integer difference) {
+        if (eventDate.isBefore(publishedOn)) {
+            throw new ValidTimeException("Обратите внимание: дата и время, на которые намечено событие," +
+                    " не может быть в прошлом");
+        }
+        if (Duration.between(publishedOn, eventDate).toMinutes() < Duration.ofHours(difference).toMinutes()) {
+            throw new ValidTimeException(String.format("Обратите внимание: дата и время, на которые намечено событие," +
+                    " не может быть раньше, чем через =%d час/часа от текущего момента", difference));
+        }
+        return eventDate;
     }
 }
