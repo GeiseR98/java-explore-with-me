@@ -8,6 +8,7 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.UniqueElements;
 
 import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -16,7 +17,8 @@ import java.util.List;
 @NoArgsConstructor
 public class NewCompilationDto {
     @UniqueElements
-    private List<Integer> eventIds;
+    @Builder.Default
+    private List<Integer> events = new ArrayList<>();
     @Builder.Default
     private Boolean pinned = false;
     @NotBlank
