@@ -36,7 +36,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         ParticipationRequest participationRequest = ParticipationRequest.builder()
                 .created(LocalDateTime.now())
                 .event(event)
-                .requestor(user)
+                .requester(user)
                 .build();
 
         if (!event.getRequestModeration() || event.getParticipantLimit() == 0) {
@@ -53,7 +53,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     @Override
     public List<ParticipationRequestDto> getRequestsByUserOtherEvents(Integer userId) {
         log.debug("Найдены запросы на участие");
-        return repository.findParticipationRequestsByRequestor_Id(userId).stream()
+        return repository.findParticipationRequestsByRequester_Id(userId).stream()
                 .map(mapper::toDto)
                 .collect(Collectors.toList());
     }

@@ -13,7 +13,8 @@ public interface ParticipationRequestRepository extends JpaRepository<Participat
     List<ParticipationRequest> findParticipationRequestsByEvent_IdAndEvent_Initiator_Id(
             Integer eventId, Integer userId);
 
-    List<ParticipationRequest> findParticipationRequestsByRequestor_Id(Integer userId);
+    List<ParticipationRequest> findParticipationRequestsByRequester_Id(Integer userId);
 
-    Optional<ParticipationRequest> findParticipationRequestByIdAndRequestor_Id(Integer requestId, Integer userId);
+    Optional<ParticipationRequest> findParticipationRequestByIdAndRequester_Id(Integer requestId, Integer userId);
+
 }

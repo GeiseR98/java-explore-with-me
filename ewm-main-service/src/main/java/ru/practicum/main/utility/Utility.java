@@ -64,17 +64,19 @@ public class Utility {
 
     public Event checkAbilityToParticipationCreateRequest(Integer eventId, Integer userId) {
         Event event = checkEvent(eventId);
+
         if (event.getState().equals(EventStatus.PENDING) || event.getState().equals(EventStatus.CANCELED)) {
             throw new ConflictException("Нельзя участвовать в неопубликованном событии");
         }
         if (Objects.equals(event.getInitiator().getId(), userId)) {
             throw new ConflictException("Инициатор события не может добавить запрос на участие в своём событии");
         }
-        List<ParticipationRequest> existingRequests =
-        requestRepository.findParticipationRequestsByEvent_IdAndEvent_Initiator_Id(eventId, userId);
+
+        List<ParticipationRequest> existingRequests = requestRepository.findParticipationRequestsByRequester_Id(userId);
+
         if (existingRequests != null && !existingRequests.isEmpty()) {
             for (ParticipationRequest request : existingRequests) {
-                if (Objects.equals(request.getEvent(), eventId)) {
+                if (Objects.equals(request.getEvent().getId(), eventId)) {
                     throw new ConflictException("Нельзя добавить повторный запрос ");
                 }
             }
@@ -88,7 +90,7 @@ public class Utility {
     }
 
     public ParticipationRequest checkParticipationRequest(Integer requestId, Integer userId) {
-        return requestRepository.findParticipationRequestByIdAndRequestor_Id(requestId, userId).orElseThrow(() ->
+        return requestRepository.findParticipationRequestByIdAndRequester_Id(requestId, userId).orElseThrow(() ->
                 new NotFoundException("Запрос не найден или недоступен"));
     }
 
