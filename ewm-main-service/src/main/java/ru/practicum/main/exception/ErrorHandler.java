@@ -33,12 +33,12 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleValidTimeException(final ValidTimeException e) {
         return ApiError.builder()
                 .message(e.getMessage())
                 .reason("Событие не удовлетворяет правилам создания.")
-                .status(HttpStatus.CONFLICT.toString())
+                .status(HttpStatus.BAD_REQUEST.toString())
                 .timestamp(LocalDateTime.parse(LocalDateTime.now().format(Constants.formatter), Constants.formatter))
                 .build();
     }

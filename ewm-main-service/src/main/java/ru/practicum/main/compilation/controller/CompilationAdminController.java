@@ -34,7 +34,7 @@ public class CompilationAdminController {
         compilationService.deleteCompilations(compId);
     }
 
-    @PatchMapping(path = "/compilations/{compId}")
+    @PatchMapping(path = "/{compId}")
     public CompilationDto changeCompilations(@PathVariable(name = "compId") Integer compId,
                                              @RequestBody @Valid UpdateCompilationRequest updateCompilationRequest) {
         log.debug("Обновить информацию о подборке");
