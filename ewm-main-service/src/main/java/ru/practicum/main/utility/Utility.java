@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.main.category.model.Category;
 import ru.practicum.main.category.repository.CategoryRepository;
+import ru.practicum.main.compilation.model.Compilation;
+import ru.practicum.main.compilation.repository.CompilationRepository;
 import ru.practicum.main.event.model.Event;
 import ru.practicum.main.event.model.EventStatus;
 import ru.practicum.main.event.repository.EventRepository;
@@ -29,6 +31,7 @@ public class Utility {
     private final CategoryRepository catRepository;
     private final EventRepository eventRepository;
     private final ParticipationRequestRepository requestRepository;
+    private final CompilationRepository compilationRepository;
 
     public User checkUser(Integer userId) {
         return userRepository.findById(userId).orElseThrow(() ->
@@ -85,6 +88,11 @@ public class Utility {
     public ParticipationRequest checkParticipationRequest(Integer requestId, Integer userId) {
         return requestRepository.findParticipationRequestByIdAndRequestor_Id(requestId, userId).orElseThrow(() ->
                 new NotFoundException("Запрос не найден или недоступен"));
+    }
+
+    public Compilation checkCompilation(Integer compilationId) {
+        return compilationRepository.findById(compilationId).orElseThrow(() ->
+                new NotFoundException(String.format("Подборка с идентификатором =%d не найдена.", compilationId)));
     }
 
     public LocalDateTime validTime(LocalDateTime createdOn, LocalDateTime eventDate, Integer difference) {
