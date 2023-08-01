@@ -22,6 +22,6 @@ public class NewCompilationDto {
     @Builder.Default
     private Boolean pinned = false;
     @NotBlank
-    @Length(max = 120)
+    @Length(max = 50)
     private String title;
 }

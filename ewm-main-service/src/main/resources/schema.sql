@@ -4,14 +4,14 @@ CREATE TABLE IF NOT EXISTS users
 (
     id    BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL PRIMARY KEY,
     name  VARCHAR(250)                        NOT NULL,
-    email VARCHAR(320)                        NOT NULL,
+    email VARCHAR(254)                        NOT NULL,
     UNIQUE (email)
 );
 
 CREATE TABLE IF NOT EXISTS categories
 (
     id    BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL PRIMARY KEY,
-    name  VARCHAR(255)                        NOT NULL,
+    name  VARCHAR(50)                        NOT NULL,
     UNIQUE (name)
 );
 
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS compilations
 (
     id     INT GENERATED ALWAYS AS IDENTITY     NOT NULL PRIMARY KEY,
     pinned BOOLEAN                              NOT NULL,
-    title  VARCHAR(1024)                        NOT NULL
+    title  VARCHAR(50)                        NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS compilations_events

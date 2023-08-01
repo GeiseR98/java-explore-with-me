@@ -17,6 +17,6 @@ public class UserDto {
     private String name;
     @Email
     @NotBlank
-    @Length(min = 6, max = 320)
+    @Length(min = 6, max = 254)
     private String email;
 }
