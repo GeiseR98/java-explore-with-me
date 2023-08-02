@@ -39,8 +39,8 @@ public class StatsClient extends BaseClient {
                 .ip(request.getRemoteAddr())
                 .timestamp(LocalDateTime.now())
                 .build();
-//        post(serverUrl + "/hit", hitDto);
-        post("http://localhost:9090/hit", hitDto);
+        post(serverUrl + "/hit", hitDto);
+//        post("http://localhost:9090/hit", hitDto);
     }
 
     public ResponseEntity<Object> stats(String start,
@@ -54,7 +54,7 @@ public class StatsClient extends BaseClient {
                 "unique", unique
         );
 
-//        return get(serverUrl + "/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
-        return get("http://localhost:9090/stats?start={start}&end={end}&uris={uris}&unique=true", parameters);
+        return get(serverUrl + "/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
+//        return get("http://localhost:9090/stats?start={start}&end={end}&uris={uris}&unique=true", parameters);
     }
 }

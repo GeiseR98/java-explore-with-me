@@ -140,8 +140,8 @@ public class Utility {
     }
 
     public Integer checkViews(Event event, HttpServletRequest request) {
-        ResponseEntity<Object> response = client.stats(event.getCreatedOn().toString().replace("T", " ").substring(0, 19),
-                event.getEventDate().toString().replace("T", " ").substring(0, 19),
+        ResponseEntity<Object> response = client.stats(event.getCreatedOn().toString().replace("T", " "), //.substring(0, 19),
+                event.getEventDate().toString().replace("T", " "),//.substring(0, 19),
                 List.of(request.getRequestURI()),
                 true);
 
