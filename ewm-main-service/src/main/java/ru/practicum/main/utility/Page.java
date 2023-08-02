@@ -24,6 +24,8 @@ public class Page {
     public static Pageable paged(Integer from, Integer size, String sort) {
         if (sort.equals("EVENT_DATE")) {
             sort = "eventDate";
+        } else {
+            sort = "views";
         }
         Pageable page;
         if (from != null && size != null) {
