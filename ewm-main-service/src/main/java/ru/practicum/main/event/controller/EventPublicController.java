@@ -49,7 +49,7 @@ public class EventPublicController {
                                          @RequestParam(name = "size",          defaultValue = "10")    @Positive Integer size,
                                                                                                  HttpServletRequest request) {
         log.debug("Попытка получения событий с возможностью фильтрации");
-        client.hit(request);
+//        client.hit(request);
         return eventService.getEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size, request);
     }
 }

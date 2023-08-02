@@ -90,7 +90,7 @@ public class EventServiceImpl implements EventService {
     @Transactional
     public EventDto getEventById(Integer eventId, HttpServletRequest request) {
         Event event = utility.checkPublishedEvent(eventId);
-        event.setViews(utility.checkViews(event, request));
+        event.setViews(utility.getView(event, request));
         eventRepository.save(event);
         return eventMapper.toDto(event);
     }
@@ -123,12 +123,14 @@ public class EventServiceImpl implements EventService {
                 .onlyAvailable(onlyAvailable)
                 .build();
         Predicate predicate = getPredicates(filter);
-//        log.debug("События найдены");
+
         List<Event> events = eventRepository.findAll(predicate, page).stream()
                 .collect(Collectors.toList());
         if (events.isEmpty()) {
             throw new NotFoundException("Событий не найдено");
         }
+
+        utility.hits(events, request);
 
         events.forEach(event -> event.setViews(event.getViews() + 1));
 

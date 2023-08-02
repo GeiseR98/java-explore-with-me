@@ -28,6 +28,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -139,7 +140,7 @@ public class Utility {
         return createdOn;
     }
 
-    public Integer checkViews(Event event, HttpServletRequest request) {
+    public Integer getView(Event event, HttpServletRequest request) {
         ResponseEntity<Object> response = client.stats(event.getCreatedOn().toString().replace("T", " ").substring(0, 19),
                 event.getEventDate().toString().replace("T", " ").substring(0, 19),
                 request.getRequestURI(),
@@ -156,5 +157,9 @@ public class Utility {
             return viewStats.getHits().intValue();
         }
         return event.getViews();
+    }
+
+    public void hits(List<Event> events, HttpServletRequest request) {
+        client.hits(events.stream().map(Event::getId).collect(Collectors.toList()), request);
     }
 }

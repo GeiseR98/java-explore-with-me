@@ -32,6 +32,13 @@ public class EndpointHitController {
         return service.addHit(endpointHitDto);
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(path = "/hits")
+    public List<EndpointHitDto> hits(@Valid @RequestBody List<EndpointHitDto> endpointHitDto) {
+        log.debug("Создание запроса {}", endpointHitDto);
+        return service.addHits(endpointHitDto);
+    }
+
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(path = "/stats")
     public List<ViewStats> stats(@RequestParam(name = "start")  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,

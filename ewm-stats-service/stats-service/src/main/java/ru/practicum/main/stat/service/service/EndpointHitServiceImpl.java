@@ -55,4 +55,12 @@ public class EndpointHitServiceImpl implements EndpointHitService {
         }
         return list.stream().sorted(Comparator.comparing(ViewStats::getHits).reversed()).collect(Collectors.toList());
     }
+
+    @Override
+    public List<EndpointHitDto> addHits(List<EndpointHitDto> hitsDto) {
+        log.debug("Записи статистики успешно добавлены.");
+        return repository.saveAll(hitsDto.stream().map(mapper::toEntity).collect(Collectors.toList())).stream()
+                .map(mapper::toDto)
+                .collect(Collectors.toList());
+    }
 }
