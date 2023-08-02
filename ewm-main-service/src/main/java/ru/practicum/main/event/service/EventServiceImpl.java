@@ -90,7 +90,7 @@ public class EventServiceImpl implements EventService {
     @Transactional
     public EventDto getEventById(Integer eventId, HttpServletRequest request) {
         Event event = utility.checkPublishedEvent(eventId);
-        event.setViews(utility.getView(event, request));
+        event.setViews(utility.getView(event));
         eventRepository.save(event);
         return eventMapper.toDto(event);
     }
@@ -132,7 +132,7 @@ public class EventServiceImpl implements EventService {
 
         utility.hits(events, request);
 
-        events.forEach(event -> event.setViews(event.getViews() + 1));
+        events.forEach(event -> event.setViews(utility.getView(event)));
 
         eventRepository.saveAll(events);
 

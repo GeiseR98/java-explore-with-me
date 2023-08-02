@@ -57,6 +57,7 @@ public class EndpointHitServiceImpl implements EndpointHitService {
     }
 
     @Override
+    @Transactional
     public List<EndpointHitDto> addHits(List<EndpointHitDto> hitsDto) {
         log.debug("Записи статистики успешно добавлены.");
         return repository.saveAll(hitsDto.stream().map(mapper::toEntity).collect(Collectors.toList())).stream()

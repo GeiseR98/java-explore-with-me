@@ -140,10 +140,10 @@ public class Utility {
         return createdOn;
     }
 
-    public Integer getView(Event event, HttpServletRequest request) {
+    public Integer getView(Event event) {
         ResponseEntity<Object> response = client.stats(event.getCreatedOn().toString().replace("T", " ").substring(0, 19),
                 event.getEventDate().toString().replace("T", " ").substring(0, 19),
-                request.getRequestURI(),
+                "/events/" + event.getId(),
                 true);
 
         if (response.getStatusCode().equals(HttpStatus.OK)) {
