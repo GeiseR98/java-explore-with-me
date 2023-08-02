@@ -127,15 +127,14 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @Transactional
     public List<EventDto> findEvents(List<Integer> users, List<String> states, List<Integer> categories,
                                      LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size) {
         Pageable page = Page.paged(from, size);
         Filter filter = Filter.builder()
                 .users(users)
-                .states(states.stream()
+                .states(states != null ? states.stream()
                         .map(state -> EventStatus.valueOf(state.toUpperCase()))
-                        .collect(Collectors.toList()))
+                        .collect(Collectors.toList()) : null)
                 .categories(categories)
                 .rangeStart(rangeStart)
                 .rangeEnd(rangeEnd)
@@ -150,9 +149,14 @@ public class EventServiceImpl implements EventService {
                 .buildAnd();
 
         log.debug("События найдены");
-        return eventRepository.findAll(predicate, page).stream()
-                .map(eventMapper::toDto)
-                .collect(Collectors.toList());
+
+        return predicate != null ?
+                eventRepository.findAll(predicate, page).stream()
+                        .map(eventMapper::toDto)
+                        .collect(Collectors.toList()) :
+                eventRepository.findAll(page).stream()
+                        .map(eventMapper::toDto)
+                        .collect(Collectors.toList());
     }
 
     @Override
