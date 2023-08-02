@@ -16,7 +16,7 @@ public class Page {
             }
             page = PageRequest.of(from > 0 ? from / size : 0, size);
         } else {
-            page = PageRequest.of(0, 4);
+            page = PageRequest.of(0, 10);
         }
         return page;
     }
@@ -32,7 +32,7 @@ public class Page {
             }
             page = PageRequest.of(from > 0 ? from / size : 0, size, Sort.by(Sort.Direction.DESC, sort));
         } else {
-            page = PageRequest.of(0, 4, Sort.by(Sort.Direction.DESC, sort));
+            page = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, sort));
         }
         return page;
     }

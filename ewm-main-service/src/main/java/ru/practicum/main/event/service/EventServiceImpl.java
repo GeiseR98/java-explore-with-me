@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.main.category.mapper.CategoryMapper;
+import ru.practicum.main.category.model.Category;
 import ru.practicum.main.event.dto.*;
 import ru.practicum.main.event.mapper.EventMapper;
 import ru.practicum.main.event.model.Event;
@@ -30,7 +31,6 @@ import ru.practicum.main.utility.Filter;
 import ru.practicum.main.utility.Page;
 import ru.practicum.main.utility.QPredicates;
 import ru.practicum.main.utility.Utility;
-import ru.practicum.main.category.model.Category;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -133,7 +133,9 @@ public class EventServiceImpl implements EventService {
         Pageable page = Page.paged(from, size);
         Filter filter = Filter.builder()
                 .users(users)
-                .states(states.stream().map(state -> EventStatus.valueOf(state.toUpperCase())).collect(Collectors.toList()))
+                .states(states.stream()
+                        .map(state -> EventStatus.valueOf(state.toUpperCase()))
+                        .collect(Collectors.toList()))
                 .categories(categories)
                 .rangeStart(rangeStart)
                 .rangeEnd(rangeEnd)
@@ -163,6 +165,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventRequestStatusUpdateResult changeStatusRequestsByUser(Integer userId, Integer eventId, EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest) {
         List<ParticipationRequest> requestList = requestRepository.findParticipationRequestsByEvent_IdAndEvent_Initiator_Id(eventId, userId);
 
@@ -197,6 +200,9 @@ public class EventServiceImpl implements EventService {
 
         List<ParticipationRequestDto> requestsConfirmed = new ArrayList<>();
         List<ParticipationRequestDto> requestsRejected = new ArrayList<>();
+
+        eventRepository.save(event);
+        requestRepository.saveAll(requestList);
 
         for (ParticipationRequest request : requestList) {
             if (request.getState().equals(ParticipationRequestStatus.CONFIRMED)) {
