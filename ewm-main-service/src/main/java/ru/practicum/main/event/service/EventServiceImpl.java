@@ -18,6 +18,7 @@ import ru.practicum.main.event.model.StateActionAdmin;
 import ru.practicum.main.event.repository.EventRepository;
 import ru.practicum.main.exception.ConflictException;
 import ru.practicum.main.exception.NotFoundException;
+import ru.practicum.main.exception.ValidTimeException;
 import ru.practicum.main.location.model.Location;
 import ru.practicum.main.location.service.LocationService;
 import ru.practicum.main.requests.dto.EventRequestStatusUpdateRequest;
@@ -103,8 +104,16 @@ public class EventServiceImpl implements EventService {
     @Transactional
     public List<EventShortDto> getEvents(String text, List<Integer> categories, Boolean paid,
                                          LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable,
-                                         String sort, Integer from, Integer size) {
+                                         String sort, Integer from, Integer size, HttpServletRequest request) {
         Pageable page = Page.paged(from, size, sort);
+
+        if (rangeStart != null && rangeEnd != null) {
+            if (rangeStart.isAfter(rangeEnd)) {
+                throw new ValidTimeException("Обратите внимание: Дата и время не раньше которых должно произойти событие," +
+                        " не может быть позже чем дата и время не позже которых должно произойти событие...");
+            }
+        }
+
         Filter filter = Filter.builder()
                 .text(text)
                 .categories(categories)
@@ -114,9 +123,12 @@ public class EventServiceImpl implements EventService {
                 .onlyAvailable(onlyAvailable)
                 .build();
         Predicate predicate = getPredicates(filter);
-        log.debug("События найдены");
+//        log.debug("События найдены");
         List<Event> events = eventRepository.findAll(predicate, page).stream()
                 .collect(Collectors.toList());
+        if (events.isEmpty()) {
+            throw new NotFoundException("Событий не найдено");
+        }
 
         events.forEach(event -> event.setViews(event.getViews() + 1));
 

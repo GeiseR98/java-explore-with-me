@@ -50,6 +50,6 @@ public class EventPublicController {
                                                                                                  HttpServletRequest request) {
         log.debug("Попытка получения событий с возможностью фильтрации");
         client.hit(request);
-        return eventService.getEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
+        return eventService.getEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size, request);
     }
 }
