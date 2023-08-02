@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS users, categories, locations, events, requests, compilations, compilations_events CASCADE;
+DROP TABLE IF EXISTS users, categories, locations, events, requests, compilations, compilations_events, comments CASCADE;
 
 CREATE TABLE IF NOT EXISTS users
 (
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS compilations
 (
     id     INT GENERATED ALWAYS AS IDENTITY     NOT NULL PRIMARY KEY,
     pinned BOOLEAN                              NOT NULL,
-    title  VARCHAR(50)                        NOT NULL
+    title  VARCHAR(50)                          NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS compilations_events
@@ -69,4 +69,15 @@ CREATE TABLE IF NOT EXISTS compilations_events
     events_id       INTEGER REFERENCES events (id)       ON DELETE CASCADE,
     PRIMARY KEY (compilations_id, events_id)
 );
+
+CREATE TABLE IF NOT EXISTS comments
+(
+    id           BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL PRIMARY KEY,
+    text         VARCHAR(7000)                       NOT NULL,
+    event_id     BIGINT                              NOT NULL,
+    author_id    BIGINT                              NOT NULL,
+    created      TIMESTAMP WITHOUT TIME ZONE         NOT NULL,
+    CONSTRAINT fk_event   FOREIGN KEY (event_id)   REFERENCES events (id),
+    CONSTRAINT fk_author  FOREIGN KEY (author_id)  REFERENCES users (id)
+)
 
