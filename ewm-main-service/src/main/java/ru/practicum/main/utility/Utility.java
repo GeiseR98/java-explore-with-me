@@ -1,7 +1,10 @@
 package ru.practicum.main.utility;
 
+import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.practicum.main.category.model.Category;
 import ru.practicum.main.category.repository.CategoryRepository;
@@ -15,9 +18,12 @@ import ru.practicum.main.exception.NotFoundException;
 import ru.practicum.main.exception.ValidTimeException;
 import ru.practicum.main.requests.model.ParticipationRequest;
 import ru.practicum.main.requests.repository.ParticipationRequestRepository;
+import ru.practicum.main.stat.client.StatsClient;
+import ru.practicum.main.stat.dto.ViewStats;
 import ru.practicum.main.user.model.User;
 import ru.practicum.main.user.repository.UserRepository;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,6 +38,8 @@ public class Utility {
     private final EventRepository eventRepository;
     private final ParticipationRequestRepository requestRepository;
     private final CompilationRepository compilationRepository;
+    private final StatsClient client;
+    private final Gson gson = new Gson();
 
     public User checkUser(Integer userId) {
         return userRepository.findById(userId).orElseThrow(() ->
@@ -117,5 +125,36 @@ public class Utility {
                     " не может быть раньше, чем через =%d час/часа от текущего момента", difference));
         }
         return eventDate;
+    }
+
+    public LocalDateTime validTimeCreatedOn(LocalDateTime createdOn, LocalDateTime eventDate, Integer difference) {
+        if (eventDate.isBefore(createdOn)) {
+            throw new ValidTimeException("Обратите внимание: дата и время, на которые намечено событие," +
+                    " не может быть в прошлом");
+        }
+        if (Duration.between(createdOn, eventDate).toMinutes() < Duration.ofHours(difference).toMinutes()) {
+            throw new ValidTimeException(String.format("Обратите внимание: дата и время, на которые намечено событие," +
+                    " не может быть раньше, чем через =%d час/часа от текущего момента", difference));
+        }
+        return createdOn;
+    }
+
+    public Integer checkViews(Event event, HttpServletRequest request) {
+        ResponseEntity<Object> response = client.stats(event.getCreatedOn().toString().replace("T", " ").substring(0, 19),
+                event.getEventDate().toString().replace("T", " ").substring(0, 19),
+                List.of(request.getRequestURI()),
+                true);
+
+        if (response.getStatusCode().equals(HttpStatus.OK)) {
+            String body = Objects.requireNonNull(response.getBody()).toString()
+                    .replace("[{", "{\"")
+                    .replace("}]", "\"}")
+                    .replace("=", "\":\"")
+                    .replace(", ", "\",\"");
+
+            ViewStats viewStats = gson.fromJson(body, ViewStats.class);
+            return viewStats.getHits().intValue();
+        }
+        return event.getViews();
     }
 }

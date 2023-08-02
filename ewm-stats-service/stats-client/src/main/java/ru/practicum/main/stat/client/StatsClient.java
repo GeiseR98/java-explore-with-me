@@ -11,6 +11,7 @@ import ru.practicum.main.stat.dto.EndpointHitDto;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -44,14 +45,16 @@ public class StatsClient extends BaseClient {
 
     public ResponseEntity<Object> stats(String start,
                                         String end,
-                                        String[] uris,
-                                        boolean unique) {
+                                        List<String> uris,
+                                        Boolean unique) {
         Map<String, Object> parameters = Map.of(
                 "start", start,
                 "end", end,
                 "uris", uris,
                 "unique", unique
         );
-        return patch("/stats?start={start}&end={end}&uris={uris}&unique={unique}", null, parameters, null);
+
+//        return get(serverUrl + "/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
+        return get("http://localhost:9090/stats?start={start}&end={end}&uris={uris}&unique=true", parameters);
     }
 }

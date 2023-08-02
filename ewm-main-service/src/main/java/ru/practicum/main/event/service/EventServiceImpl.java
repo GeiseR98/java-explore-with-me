@@ -32,6 +32,7 @@ import ru.practicum.main.utility.Page;
 import ru.practicum.main.utility.QPredicates;
 import ru.practicum.main.utility.Utility;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +62,7 @@ public class EventServiceImpl implements EventService {
                 newEventDto,
                 utility.checkUser(userId),
                 utility.checkCategory(newEventDto.getCategory()),
-                utility.validTimeEventDate(LocalDateTime.now(), newEventDto.getEventDate(), 2));
+                utility.validTimeCreatedOn(LocalDateTime.now(), newEventDto.getEventDate(), 2));
 
         event = eventRepository.save(event);
         return eventMapper.toDto(event);
@@ -86,9 +87,9 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventDto getEventById(Integer eventId) {
+    public EventDto getEventById(Integer eventId, HttpServletRequest request) {
         Event event = utility.checkPublishedEvent(eventId);
-        event.setViews(event.getViews() + 1);
+        event.setViews(utility.checkViews(event, request));
         eventRepository.save(event);
         return eventMapper.toDto(event);
     }

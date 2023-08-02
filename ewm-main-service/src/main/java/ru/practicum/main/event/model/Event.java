@@ -1,5 +1,6 @@
 package ru.practicum.main.event.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,6 +29,7 @@ public class Event {
     @Column(name = "confirmed_requests")
     private Integer confirmedRequests;
     @Column(name = "created_on")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdOn;
     private String description;
     @Column(name = "event_date")
@@ -42,6 +44,7 @@ public class Event {
     @Column(name = "participant_limit")
     private Integer participantLimit;
     @Column(name = "published_on")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime publishedOn;
     @Column(name = "request_moderation")
     private Boolean requestModeration;

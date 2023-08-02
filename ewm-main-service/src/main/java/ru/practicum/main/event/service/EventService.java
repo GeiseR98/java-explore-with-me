@@ -6,6 +6,7 @@ import ru.practicum.main.requests.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.main.requests.dto.EventRequestStatusUpdateResult;
 import ru.practicum.main.requests.dto.ParticipationRequestDto;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -16,7 +17,7 @@ public interface EventService {
 
     List<EventShortDto> getEventsByUser(Integer userId, Integer from, Integer size);
 
-    EventDto getEventById(Integer eventId);
+    EventDto getEventById(Integer eventId, HttpServletRequest request);
 
     List<Event> findEventsByIds(List<Integer> eventIds);
 

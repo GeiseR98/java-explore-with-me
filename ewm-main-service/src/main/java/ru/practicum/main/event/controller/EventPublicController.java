@@ -33,7 +33,7 @@ public class EventPublicController {
                                                                            HttpServletRequest request) {
         log.debug("Получение подробной информации об опубликованном событии по его идентификаторе");
         client.hit(request);
-        return eventService.getEventById(eventId);
+        return eventService.getEventById(eventId, request);
     }
 
     @ResponseStatus(HttpStatus.OK)
