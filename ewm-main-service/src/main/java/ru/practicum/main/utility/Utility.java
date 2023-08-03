@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class Utility {
     private final UserRepository userRepository;
-    private final CategoryRepository catRepository;
+    private final CategoryRepository categoryRepository;
     private final EventRepository eventRepository;
     private final ParticipationRequestRepository requestRepository;
     private final CompilationRepository compilationRepository;
@@ -48,7 +48,7 @@ public class Utility {
     }
 
     public Category checkCategory(Integer catId) {
-        return catRepository.findById(catId).orElseThrow(() ->
+        return categoryRepository.findById(catId).orElseThrow(() ->
                 new NotFoundException(String.format("Категория с идентификатором =%d не найдена", catId)));
     }
 
@@ -161,5 +161,31 @@ public class Utility {
 
     public void hits(List<Event> events, HttpServletRequest request) {
         client.hits(events.stream().map(Event::getId).collect(Collectors.toList()), request);
+    }
+
+    public void checkAbilityCreateNameCategory(String name) {
+        if (!categoryRepository.findCategoryByName(name).isEmpty()) {
+            throw new ConflictException("Данное название категории уже занято!");
+        }
+    }
+
+    public void checkAbilityChangeNameCategory(String name, Integer catId) {
+        for (Category cat : categoryRepository.findCategoryByName(name)) {
+            if (!cat.getId().equals(catId)) {
+                throw new ConflictException("Данное название категории уже занято!");
+            }
+        }
+    }
+
+    public void checkEmploymentEmailUser(String email) {
+        if (!userRepository.findUserByEmail(email).isEmpty()) {
+            throw new ConflictException("Данный email уже занят.");
+        }
+    }
+
+    public void checkAbilityRemoveCategory(Integer catId) {
+        if (!eventRepository.findEventsByCategory_Id(catId).isEmpty()) {
+            throw new ConflictException("Данную категорию нельзя удалить т.к. она используется.");
+        }
     }
 }

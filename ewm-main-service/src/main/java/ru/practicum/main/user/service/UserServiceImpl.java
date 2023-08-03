@@ -26,6 +26,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto save(UserDto userDto) {
+        utility.checkEmploymentEmailUser(userDto.getEmail());
         return userMapper.toDto(userRepository.save(userMapper.toEntity(userDto)));
     }
 

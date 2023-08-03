@@ -28,18 +28,21 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public CategoryDto save(CategoryDto categoryDto) {
+        utility.checkAbilityCreateNameCategory(categoryDto.getName());
         return categoryMapper.toDto(categoryRepository.save(categoryMapper.toEntity(categoryDto)));
     }
 
     @Override
     @Transactional
     public void removeById(Integer catId) {
+        utility.checkAbilityRemoveCategory(catId);
         categoryRepository.deleteById(utility.checkCategory(catId).getId());
     }
 
     @Override
     @Transactional
     public CategoryDto changeCategory(Integer catId, CategoryDto categoryDto) {
+        utility.checkAbilityChangeNameCategory(categoryDto.getName(), catId);
         Category cat = utility.checkCategory(catId);
         cat.setName(categoryDto.getName());
         return categoryMapper.toDto(categoryRepository.save(cat));

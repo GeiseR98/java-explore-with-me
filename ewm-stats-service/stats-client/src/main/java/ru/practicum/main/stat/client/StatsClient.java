@@ -41,7 +41,6 @@ public class StatsClient extends BaseClient {
                 .timestamp(LocalDateTime.now())
                 .build();
         post(serverUrl + "/hit", hitDto);
-//        post("http://localhost:9090/hit", hitDto);
     }
 
     public void hits(List<Integer> events, HttpServletRequest request) {
@@ -55,9 +54,7 @@ public class StatsClient extends BaseClient {
                     .timestamp(LocalDateTime.now())
                     .build());
         }
-
         post(serverUrl + "/hits", hitsDto);
-//        post("http://localhost:9090/hits", hitsDto);
     }
 
     public ResponseEntity<Object> stats(String start,
@@ -72,6 +69,5 @@ public class StatsClient extends BaseClient {
         );
 
         return get(serverUrl + "/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
-//        return get("http://localhost:9090/stats?start={start}&end={end}&uris={uris}&unique=true", parameters);
     }
 }

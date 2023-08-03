@@ -10,6 +10,8 @@ import ru.practicum.main.location.model.Location;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 
 @Data
@@ -22,6 +24,7 @@ public class NewEventDto {
     @Length(min = 20, max = 2000)
     private String annotation;
     @NotNull
+    @Positive
     private Integer category;
     @NotBlank
     @Length(min = 20, max = 7000)
@@ -34,6 +37,7 @@ public class NewEventDto {
     @Builder.Default
     private Boolean paid = false;
     @Builder.Default
+    @PositiveOrZero
     private Integer participantLimit = 0;
     @Builder.Default
     private Boolean requestModeration = true;

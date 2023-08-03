@@ -24,7 +24,7 @@ import java.util.List;
 public class EventAdminController {
     private final EventService eventService;
 
-//    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.OK)
     @PatchMapping(path = "/{eventId}")
     public EventDto changeEvents(@PathVariable(name = "eventId") @Positive Integer eventId,
                                      @RequestBody @Valid UpdateEventAdminRequest updateEventAdminRequest) {
@@ -44,6 +44,4 @@ public class EventAdminController {
         log.debug("Попытка получения событий с возможностью фильтрации");
         return eventService.findEvents(users, states, categories, rangeStart, rangeEnd, from, size);
     }
-
-
 }
