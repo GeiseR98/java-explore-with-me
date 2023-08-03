@@ -52,8 +52,19 @@ CREATE TABLE if NOT EXISTS requests
     event_id     BIGINT                              NOT NULL,
     requester_id BIGINT                              NOT NULL,
     state        VARCHAR(50)                         NOT NULL,
-    CONSTRAINT fk_event     FOREIGN KEY (event_id)     REFERENCES events (id),
+    CONSTRAINT fk_events     FOREIGN KEY (event_id)     REFERENCES events (id),
     CONSTRAINT fk_requester FOREIGN KEY (requester_id) REFERENCES users (id)
+);
+
+CREATE TABLE IF NOT EXISTS comments
+(
+    id           BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL PRIMARY KEY,
+    text         VARCHAR(7000)                       NOT NULL,
+    event_id     BIGINT                              NOT NULL,
+    author_id    BIGINT                              NOT NULL,
+    created      TIMESTAMP WITHOUT TIME ZONE         NOT NULL,
+    CONSTRAINT fk_event     FOREIGN KEY (event_id)     REFERENCES events (id),
+    CONSTRAINT fk_author    FOREIGN KEY (author_id)    REFERENCES users (id)
 );
 
 CREATE TABLE IF NOT EXISTS compilations
@@ -70,14 +81,5 @@ CREATE TABLE IF NOT EXISTS compilations_events
     PRIMARY KEY (compilations_id, events_id)
 );
 
-CREATE TABLE IF NOT EXISTS comments
-(
-    id           BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL PRIMARY KEY,
-    text         VARCHAR(7000)                       NOT NULL,
-    event_id     BIGINT                              NOT NULL,
-    author_id    BIGINT                              NOT NULL,
-    created      TIMESTAMP WITHOUT TIME ZONE         NOT NULL,
-    CONSTRAINT fk_event   FOREIGN KEY (event_id)   REFERENCES events (id),
-    CONSTRAINT fk_author  FOREIGN KEY (author_id)  REFERENCES users (id)
-)
+
 
