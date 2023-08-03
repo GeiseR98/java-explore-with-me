@@ -11,7 +11,6 @@ import ru.practicum.main.requests.mapper.ParticipationRequestMapper;
 import ru.practicum.main.requests.model.ParticipationRequest;
 import ru.practicum.main.requests.model.ParticipationRequestStatus;
 import ru.practicum.main.requests.repository.ParticipationRequestRepository;
-import ru.practicum.main.user.model.User;
 import ru.practicum.main.utility.Utility;
 
 import java.time.LocalDateTime;
@@ -31,12 +30,11 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     @Override
     @Transactional
     public ParticipationRequestDto createRequestsByUserOtherEvents(Integer userId, Integer eventId) {
-        User user = utility.checkUser(userId);
         Event event = utility.checkAbilityToParticipationCreateRequest(eventId, userId);
         ParticipationRequest participationRequest = ParticipationRequest.builder()
                 .created(LocalDateTime.now())
                 .event(event)
-                .requester(user)
+                .requester(utility.checkUser(userId))
                 .build();
 
         if (!event.getRequestModeration() || event.getParticipantLimit() == 0) {
