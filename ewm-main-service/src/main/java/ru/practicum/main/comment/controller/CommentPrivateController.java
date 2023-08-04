@@ -26,8 +26,8 @@ public class CommentPrivateController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public CommentDto create(@PathVariable Integer userId,
-                             @RequestParam Integer eventId,
+    public CommentDto create(@PathVariable(name = "userId") Integer userId,
+                             @RequestParam(name = "eventId") Integer eventId,
                              @RequestBody @Valid NewCommentDto newComment) {
         log.debug("Создание комментария от текущего пользователя");
         return commentService.createComment(userId, eventId, newComment);
