@@ -5,7 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.main.comment.dto.CommentByUserDto;
 import ru.practicum.main.comment.dto.CommentDto;
+import ru.practicum.main.comment.dto.CommentUpdateDto;
 import ru.practicum.main.comment.dto.NewCommentDto;
 import ru.practicum.main.comment.mapper.CommentMapper;
 import ru.practicum.main.comment.model.Comment;
@@ -45,5 +47,48 @@ public class CommentServiceImpl implements CommentService {
                 .created(LocalDateTime.now())
                 .build();
         return mapper.toDto(commentRepository.save(comment));
+    }
+
+    @Override
+    public List<CommentByUserDto> getAllByUser(Integer userId, Integer from, Integer size) {
+        Pageable page = Page.paged(from, size);
+
+        return commentRepository.findAllByAuthor_Id(userId, page).stream()
+                .map(mapper::toByUserDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public CommentDto getById(Integer commentId) {
+        return mapper.toDto(utility.checkComment(commentId));
+    }
+
+    @Override
+    @Transactional
+    public void deleteYourOwnComment(Integer commentId, Integer userId) {
+        if (utility.checkAuthorship(commentId, userId, "Вы не можете удалять чужие комментарии")) {
+            commentRepository.deleteById(commentId);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void deleteComment(Integer commentId) {
+        commentRepository.deleteById(utility.checkComment(commentId).getId());
+    }
+
+    @Override
+    @Transactional
+    public CommentUpdateDto updateComment(NewCommentDto updateComment, Integer userId, Integer commentId) {
+        Comment comment = utility.checkComment(commentId);
+        utility.checkAuthorship(commentId, userId, "Вы не можете изменять чужие комментарии");
+            CommentUpdateDto commentUpdateDto = CommentUpdateDto.builder()
+                    .id(comment.getId())
+                    .oldText(comment.getText())
+                    .newText(updateComment.getText())
+                    .build();
+            comment.setText(updateComment.getText());
+            commentRepository.save(comment);
+            return commentUpdateDto;
     }
 }

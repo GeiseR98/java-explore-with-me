@@ -11,4 +11,6 @@ import java.util.List;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Integer> {
     List<Comment> findCommentsByEvent_Id(Integer eventId, Pageable page);
+
+    List<Comment> findAllByAuthor_Id(Integer userId, Pageable page);
 }

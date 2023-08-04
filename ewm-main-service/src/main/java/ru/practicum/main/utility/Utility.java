@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.practicum.main.category.model.Category;
 import ru.practicum.main.category.repository.CategoryRepository;
+import ru.practicum.main.comment.model.Comment;
+import ru.practicum.main.comment.repository.CommentRepository;
 import ru.practicum.main.compilation.model.Compilation;
 import ru.practicum.main.compilation.repository.CompilationRepository;
 import ru.practicum.main.event.model.Event;
@@ -39,6 +41,7 @@ public class Utility {
     private final EventRepository eventRepository;
     private final ParticipationRequestRepository requestRepository;
     private final CompilationRepository compilationRepository;
+    private final CommentRepository commentRepository;
     private final StatsClient client;
     private final Gson gson = new Gson();
 
@@ -186,6 +189,19 @@ public class Utility {
     public void checkAbilityRemoveCategory(Integer catId) {
         if (!eventRepository.findEventsByCategory_Id(catId).isEmpty()) {
             throw new ConflictException("Данную категорию нельзя удалить т.к. она используется.");
+        }
+    }
+
+    public Comment checkComment(Integer commentId) {
+        return commentRepository.findById(commentId).orElseThrow(() ->
+                new NotFoundException(String.format("Комментарий с идентификатором =%d не найден", commentId)));
+    }
+
+    public Boolean checkAuthorship(Integer commentId, Integer authorId, String message) {
+        if (Objects.equals(checkComment(commentId).getAuthor().getId(), checkUser(authorId).getId())) {
+            return true;
+        } else {
+            throw new ConflictException(message);
         }
     }
 }

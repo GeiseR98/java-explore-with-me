@@ -28,4 +28,11 @@ public class CommentPublicController {
         log.debug("Получениe комментариев по событию: {}", eventId);
         return commentService.getComments(eventId, from, size);
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/{commentId}")
+    public CommentDto getById(@PathVariable Integer commentId) {
+        log.debug("Получение комментария по идентификатору");
+        return commentService.getById(commentId);
+    }
 }
