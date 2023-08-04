@@ -45,7 +45,7 @@ public class CommentPrivateController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{commentId}")
     public void deleteYourOwnComment(@PathVariable Integer userId,
-                       @PathVariable Integer commentId) {
+                                     @PathVariable Integer commentId) {
         log.debug("Попытка удаления своего комментария");
         commentService.deleteYourOwnComment(commentId, userId);
     }
