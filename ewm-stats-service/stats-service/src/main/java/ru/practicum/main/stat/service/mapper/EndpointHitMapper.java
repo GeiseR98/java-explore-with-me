@@ -13,6 +13,4 @@ public interface EndpointHitMapper {
     EndpointHit toEntity(EndpointHitDto hitDto);
 
     EndpointHitDto toDto(EndpointHit hit);
-
-
 }
