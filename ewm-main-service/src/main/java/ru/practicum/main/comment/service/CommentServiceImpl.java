@@ -13,7 +13,6 @@ import ru.practicum.main.comment.mapper.CommentMapper;
 import ru.practicum.main.comment.model.Comment;
 import ru.practicum.main.comment.repository.CommentRepository;
 import ru.practicum.main.utility.Page;
-import ru.practicum.main.utility.Utility;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,14 +24,14 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
-    private final Utility utility;
+    private final CommentVerifier verifier;
     private final CommentMapper mapper;
 
     @Override
     public List<CommentDto> getComments(Integer eventId, Integer from, Integer size) {
         Pageable page = Page.paged(from, size);
 
-        return commentRepository.findCommentsByEvent_Id(utility.checkPublishedEvent(eventId).getId(), page).stream()
+        return commentRepository.findCommentsByEvent_Id(verifier.checkPublishedEvent(eventId).getId(), page).stream()
                 .map(mapper::toDto)
                 .collect(Collectors.toList());
     }
@@ -42,8 +41,8 @@ public class CommentServiceImpl implements CommentService {
     public CommentDto createComment(Integer userId, Integer eventId, NewCommentDto newCommentDto) {
         Comment comment = Comment.builder()
                 .text(newCommentDto.getText())
-                .event(utility.checkPublishedEvent(eventId))
-                .author(utility.checkUser(userId))
+                .event(verifier.checkPublishedEvent(eventId))
+                .author(verifier.checkUser(userId))
                 .created(LocalDateTime.now())
                 .build();
         return mapper.toDto(commentRepository.save(comment));
@@ -60,13 +59,13 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentDto getById(Integer commentId) {
-        return mapper.toDto(utility.checkComment(commentId));
+        return mapper.toDto(verifier.checkComment(commentId));
     }
 
     @Override
     @Transactional
     public void deleteYourOwnComment(Integer commentId, Integer userId) {
-        if (utility.checkAuthorship(commentId, userId, "Вы не можете удалять чужие комментарии")) {
+        if (verifier.checkAuthorship(commentId, userId, "Вы не можете удалять чужие комментарии")) {
             commentRepository.deleteById(commentId);
         }
     }
@@ -74,14 +73,14 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public void deleteComment(Integer commentId) {
-        commentRepository.deleteById(utility.checkComment(commentId).getId());
+        commentRepository.deleteById(verifier.checkComment(commentId).getId());
     }
 
     @Override
     @Transactional
     public CommentUpdateDto updateComment(NewCommentDto updateComment, Integer userId, Integer commentId) {
-        Comment comment = utility.checkComment(commentId);
-        utility.checkAuthorship(commentId, userId, "Вы не можете изменять чужие комментарии");
+        Comment comment = verifier.checkComment(commentId);
+        verifier.checkAuthorship(commentId, userId, "Вы не можете изменять чужие комментарии");
             CommentUpdateDto commentUpdateDto = CommentUpdateDto.builder()
                     .id(comment.getId())
                     .oldText(comment.getText())
